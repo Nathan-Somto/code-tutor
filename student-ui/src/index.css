@@ -1,0 +1,87 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+ 
+
+  @layer base {
+    :root {
+      --background: 0 0% 100%; /* Background color */
+      --foreground: 0 0% 20%; /* Default foreground color */
+   
+      --card: 0 0% 100%; /* Card background color */
+      --card-foreground: 0 0% 20%; /* Card foreground color */
+   
+      --popover: 0 0% 100%; /* Popover background color */
+      --popover-foreground: 0 0% 20%; /* Popover foreground color */
+   
+      --primary: 123 100% 40%; /* Primary color for key elements */
+      --primary-foreground: 0 0% 100%; /* Primary foreground color */
+   
+      --secondary: 197 100% 50%; /* Secondary color for additional elements */
+      --secondary-foreground: 0 0% 20%; /* Secondary foreground color */
+   
+      --muted: 197 100% 50%; /* Muted color */
+      --muted-foreground: 0 0% 20%; /* Muted foreground color */
+   
+      --accent: 45 100% 50%; /* Accent color for highlighting */
+      --accent-foreground: 0 0% 100%; /* Accent foreground color */
+   
+      --destructive: 8 100% 50%; /* Destructive color for alerts */
+      --destructive-foreground: 0 0% 100%; /* Destructive foreground color */
+   
+      --border: 0 0% 88%; /* Default border color */
+      --input: 0 0% 93%; /* Background color for input fields */
+      --ring: 123 100% 40%; /* Color for focus rings */
+   
+      --radius: 0.5rem; /* Default border radius */
+    }
+   
+    .dark {
+      --background: 217.2 32.6% 5%; /* Adjusted background color for dark mode */
+      --foreground: 0 0% 80%; /* Adjusted foreground color for dark mode */
+   
+      --card: 217.2 32.6% 10%; /* Adjusted card background color for dark mode */
+      --card-foreground: 0 0% 80%; /* Adjusted card foreground color for dark mode */
+   
+      --popover: 217.2 32.6% 10%; /* Adjusted popover background color for dark mode */
+      --popover-foreground: 0 0% 80%; /* Adjusted popover foreground color for dark mode */
+   
+      --primary: 110 100% 46%; /* Adjusted primary color for dark mode */
+      --primary-foreground: 0 0% 20%; /* Adjusted primary foreground color for dark mode */
+   
+      --secondary: 207 100% 55%; /* Adjusted secondary color for dark mode */
+      --secondary-foreground: 0 0% 80%; /* Adjusted secondary foreground color for dark mode */
+   
+      --muted: 207 100% 55%; /* Adjusted muted color for dark mode */
+      --muted-foreground: 0 0% 80%; /* Adjusted muted foreground color for dark mode */
+   
+      --accent: 38 100% 50%; /* Adjusted accent color for dark mode */
+      --accent-foreground: 0 0% 20%; /* Adjusted accent foreground color for dark mode */
+   
+      --destructive: 3 100% 50%; /* Adjusted destructive color for dark mode */
+      --destructive-foreground: 0 0% 100%; /* Adjusted destructive foreground color for dark mode */
+   
+      --border: 0 0% 38%; /* Adjusted border color for dark mode */
+      --input: 0 0% 26%; /* Adjusted input field background color for dark mode */
+      --ring: 110 100% 50%; /* Adjusted color for focus rings in dark mode */
+    }
+  }
+@layer base {
+  * {
+    @apply border-border;
+  }
+  body {
+    @apply bg-background text-foreground;
+  }
+  /* *::-webkit-scrollbar {
+    @apply w-4 h-3;
+  }
+  *::-webkit-scrollbar-track {
+    @apply  bg-gray-400 active:bg-gray-400 hover:bg-gray-400/90 w-5;
+  }  
+   
+  *::-webkit-scrollbar-thumb {
+   @apply bg-[rgb(50,50,50)] rounded-sm hover:bg-[rgb] active:bg-background/90; 
+  } */
+  
+}

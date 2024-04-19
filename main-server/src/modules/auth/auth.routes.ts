@@ -1,0 +1,11 @@
+import express from "express";
+import { registerStudent, registerTeacher, login, verifyEmail,changePassword, resendOtp, resetPassword } from "./auth.controller";
+const router = express.Router();
+router.post("/register-student", registerStudent);
+router.post("/register-teacher", registerTeacher);
+router.post("/login", login);
+router.post("/verify-email", verifyEmail);
+router.post("/password-reset", resetPassword);
+router.patch("/change-password/:token", changePassword);
+router.post("resend-otp", resendOtp);
+export default router;

@@ -1,0 +1,245 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mongodb"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id                 String              @id @default(auto()) @map("_id") @db.ObjectId
+  name               String
+  email              String              @unique
+  password           String
+  profile_photo      String?
+  is_email_verified  Boolean             @default(false)
+  joinedAt           DateTime            @default(now())
+  dob                DateTime
+  studentProfile     Student?
+  teacherProfile     Teacher?
+  otp                OTP?
+  PasswordResetToken PasswordResetToken?
+}
+
+model Student {
+  id                String          @id @default(auto()) @map("_id") @db.ObjectId
+  user              User            @relation(fields: [userId], references: [id])
+  userId            String          @unique @db.ObjectId
+  username          String          @unique
+  programme         String
+  xpPoints          Int             @default(0)
+  enrolledCourses   Course[]        @relation(fields: [enrolledCoursesId], references: [id])
+  enrolledCoursesId String[]        @db.ObjectId
+  unlockedBadges    Badge[]         @relation(fields: [badgeId], references: [id])
+  badgeId           String[]        @db.ObjectId
+  courseProgess     CourseProgess[]
+  streaks           Streaks[]
+  levelProgress     LevelProgress[]
+  solutions         Solution[]
+  QuestProgress     QuestProgress[]
+}
+
+model Teacher {
+  id                   String   @id @default(auto()) @map("_id") @db.ObjectId
+  user                 User     @relation(fields: [userId], references: [id])
+  userId               String   @unique @db.ObjectId
+  isVerified           Boolean
+  certificate          String
+  createdCourses       Course[] @relation("CreatedBy")
+  contributedCourses   Course[] @relation(fields: [contributedCoursesId], references: [id])
+  contributedCoursesId String[] @db.ObjectId
+}
+
+model PasswordResetToken {
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  token     String
+  expiresAt DateTime
+  user      User     @relation(fields: [userId], references: [id])
+  userId    String   @unique @db.ObjectId
+}
+
+model OTP {
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  token     Int
+  expiresAt DateTime
+  user      User     @relation(fields: [userId], references: [id])
+  userId    String   @unique @db.ObjectId
+}
+
+model Course {
+  id                 String          @id @default(auto()) @map("_id") @db.ObjectId
+  title              String
+  decription         String
+  image_url          String?
+  creator            Teacher         @relation("CreatedBy", fields: [creatorId], references: [id])
+  creatorId          String          @unique @db.ObjectId
+  contributorIds     String[]        @db.ObjectId
+  contributors       Teacher[]       @relation(fields: [contributorIds], references: [id])
+  enrolledStudents   Student[]       @relation(fields: [enrolledStudentsId], references: [id])
+  enrolledStudentsId String[]        @db.ObjectId
+  Topic              Topic[]
+  CourseProgess      CourseProgess[]
+}
+
+model Topic {
+  id             String          @id @default(auto()) @map("_id") @db.ObjectId
+  course         Course          @relation(fields: [courseId], references: [id])
+  courseId       String          @db.ObjectId
+  xpPointsNeeded Int
+  name           String
+  description    String
+  Level          Level[]
+  CourseProgess  CourseProgess[]
+}
+
+model Level {
+  id            String          @id @default(auto()) @map("_id") @db.ObjectId
+  topic         Topic           @relation(fields: [topicId], references: [id])
+  topicId       String          @db.ObjectId
+  description   String
+  name          String
+  xp            Int
+  pass_mark     Int
+  mysteryLevel  Boolean
+  Lesson        Lesson?
+  codeChallenge CodeChallenge?
+  QuizChallenge QuizChallenge[]
+  CourseProgess CourseProgess[]
+}
+
+// for MATCHING_PAIRS the client will parse the answer and split into pairs
+// it will randomize the pairs and show a question that the user will have to find the best match
+// sample answer 
+// Imperative=C;Object Oriented Programming=C++;Functional Programming=Haskell; [answer]
+
+// for COMPLETE_SEQUENCE
+// sample question
+// "$1("Hello world")" [Question]
+// "print("Hello world")" [answer]
+// ["output", "cout", "print"] [options]
+// $[number] specifies the missing piece in the question
+// the student job is to complete the sequence by choosing the right option
+model QuizChallenge {
+  id       String   @id @default(auto()) @map("_id") @db.ObjectId
+  level    Level    @relation(fields: [levelId], references: [id])
+  levelId  String   @db.ObjectId
+  question String
+  answer   String
+  options  String[]
+  quizType QuizType @default(MULTIPLE_CHOICE)
+}
+
+enum QuizType {
+  MULTIPLE_CHOICE
+  COMPLETE_SEQUENCE
+  MATCHING_PAIRS
+}
+
+model Lesson {
+  id      String   @id @default(auto()) @map("_id") @db.ObjectId
+  content String[]
+  level   Level    @relation(fields: [levelId], references: [id])
+  levelId String   @unique @db.ObjectId
+}
+
+model CodeChallenge {
+  id              String        @id @default(auto()) @map("_id") @db.ObjectId
+  level           Level?        @relation(fields: [levelId], references: [id])
+  levelId         String        @unique @db.ObjectId
+  starterFile     String
+  descriptionFile String
+  testCases       TestCase[]
+  solution        Solution[]
+  challengeType   ChallengeType @default(ALGORITHM)
+}
+
+enum ChallengeType {
+  FIX_THE_BUG
+  ALGORITHM
+  COMPLETE_CODE
+}
+
+model TestCase {
+  id              String        @id @default(auto()) @map("_id") @db.ObjectId
+  codeChallenge   CodeChallenge @relation(fields: [codeChallengeId], references: [id])
+  codeChallengeId String        @db.ObjectId
+  input           String
+  expectedOutput  String
+  description     String
+}
+
+// complete quests to unlock badges
+
+model Badge {
+  id                String    @id @default(auto()) @map("_id") @db.ObjectId
+  name              String
+  image             String
+  description       String
+  studentsWithBadge Student[] @relation(fields: [studentId], references: [id])
+  studentId         String[]  @db.ObjectId
+  quests            Quest[]
+}
+
+model Quest {
+  id                 String          @id @default(auto()) @map("_id") @db.ObjectId
+  questObjective     String
+  Badge              Badge?          @relation(fields: [badgeId], references: [id])
+  badgeId            String?         @db.ObjectId
+  studentsProgresses QuestProgress[]
+  order              Int
+}
+
+model QuestProgress {
+  id            String   @id @default(auto()) @map("_id") @db.ObjectId
+  student       Student  @relation(fields: [studentId], references: [id])
+  studentId     String   @db.ObjectId
+  quest         Quest    @relation(fields: [questId], references: [id])
+  questId       String   @db.ObjectId
+  completed     Boolean  @default(false)
+  completedDate DateTime
+}
+
+model CourseProgess {
+  id           String  @id @default(auto()) @map("_id") @db.ObjectId
+  currentTopic Topic   @relation(fields: [topicId], references: [id])
+  topicId      String  @db.ObjectId
+  currentLevel Level?  @relation(fields: [levelId], references: [id])
+  levelId      String? @db.ObjectId
+  student      Student @relation(fields: [studentId], references: [id])
+  studentId    String  @db.ObjectId
+  course       Course  @relation(fields: [courseId], references: [id])
+  courseId     String  @db.ObjectId
+}
+
+model LevelProgress {
+  id             String  @id @default(auto()) @map("_id") @db.ObjectId
+  student        Student @relation(fields: [studentId], references: [id])
+  studentId      String  @db.ObjectId
+  score          Int
+  completedLevel Boolean
+}
+
+model Streaks {
+  id        String    @id @default(auto()) @map("_id") @db.ObjectId
+  startDate DateTime
+  endDate   DateTime?
+  isActive  Boolean
+  student   Student   @relation(fields: [studentId], references: [id])
+  studentId String    @db.ObjectId
+}
+
+model Solution {
+  id              String        @id @default(auto()) @map("_id") @db.ObjectId
+  answer          String
+  codeChallenge   CodeChallenge @relation(fields: [codeChallengeId], references: [id])
+  codeChallengeId String        @db.ObjectId
+  owner           Student       @relation(fields: [studentId], references: [id])
+  studentId       String        @db.ObjectId
+}
