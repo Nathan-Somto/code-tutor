@@ -25,7 +25,7 @@ export default function Lesson() {
   }
   function onSubmit() {
     console.log("finish lesson, show result page, proceed to a new level.");
-    navigate(`/challenge/${courseId}/level/${levelId}/result`)
+    navigate(`/challenge/${courseId}/level/${levelId}/result?type=lesson`)
   }
 
   React.useEffect(() => {

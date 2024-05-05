@@ -13,6 +13,7 @@ import Courses from "./pages/(root)/Courses";
 import Learn from "./pages/(root)/Learn";
 import VerifyEmail from "./pages/(auth)/VerifyEmail";
 import Lesson from "./pages/(challenges)/Lesson";
+import Result from "./pages/(challenges)/Result";
 
 function App() {
   return (
@@ -30,7 +31,7 @@ function App() {
         <Route path="code"  element={<CodeChallenge />} />
         <Route path="quiz " element={<QuizChallenge />} />
         <Route path="lesson" element={<Lesson/>}/>
-        <Route path="result"/>
+        <Route path="result" element={<Result/>}/>
         </Route>
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
