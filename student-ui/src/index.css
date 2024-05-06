@@ -85,3 +85,14 @@
   } */
   
 }
+@keyframes blink {
+  0% {
+    border-color:transparent;
+  }
+  100%{
+    border-color: #fff;
+  }
+}
+.blink{
+  animation: blink .8s infinite;
+}
