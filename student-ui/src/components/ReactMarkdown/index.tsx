@@ -1,11 +1,14 @@
 import { PrismLight as SyntaxHighlighter } from "react-syntax-highlighter";
 import Markdown from "react-markdown"
 import {vscDarkPlus} from 'react-syntax-highlighter/dist/cjs/styles/prism';
+import { cn } from "@/utils";
 
 type Props = {
-    markdown: string
+    markdown: string,
+    pClassName?:string,
+    codeClassName?:string
 }
-function ReactMarkdown({ markdown}: Props) {
+function ReactMarkdown({ markdown, pClassName, codeClassName}: Props) {
   //const theme = true ? dark : oneLight;
   return (
     <Markdown
@@ -18,13 +21,13 @@ function ReactMarkdown({ markdown}: Props) {
             {...props}
             children = {String(children).replace(/\n$/, '')}
             PreTag="pre"
-            language={ match[1]}
+            language={match[1]}
            style = {vscDarkPlus}
-           className={className}
+           className={cn(className, codeClassName)}
 
             />
             ) : (
-            <code className={className} {...props}>
+            <code className={cn(className, codeClassName)} {...props}>
                 {children}
             </code>
             )  
@@ -39,7 +42,7 @@ function ReactMarkdown({ markdown}: Props) {
         return <h2 className="text-2xl font-semibold mb-0.5" {...props}>{children}</h2>
      },
      p({node, children, ...props}){
-        return <p className='leading-relaxed whitespace-break-spaces tracking-wide my-1.5' {...props}>{children}</p>
+        return <p className={cn('leading-relaxed whitespace-break-spaces tracking-wide my-1.5', pClassName)} {...props}>{children}</p>
      }
     } }
     />

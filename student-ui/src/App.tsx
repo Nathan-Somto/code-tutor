@@ -29,7 +29,7 @@ function App() {
         </Route>
         <Route path="/challenge/:courseId/level/:levelId">
         <Route path="code"  element={<CodeChallenge />} />
-        <Route path="quiz " element={<QuizChallenge />} />
+        <Route path="quiz" element={<QuizChallenge />} />
         <Route path="lesson" element={<Lesson/>}/>
         <Route path="result" element={<Result/>}/>
         </Route>

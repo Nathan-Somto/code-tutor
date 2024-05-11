@@ -14,7 +14,7 @@ const sampleData = [
   {
     title: "Python",
     id: 1,
-    completed: true,
+    completed: false,
     disabled: false,
     imgSrc: Python,
     progress: 45,

@@ -1,0 +1,33 @@
+[{
+    "question": "Who invented the python programming language?",
+    "answer": "Guido von rossum",
+    "options": ["Ryan Dahl", "Dennis Ritchie", "Guido von rossum"],
+    "quizType": "MultipleChoice"
+}, {
+    "question": "Which type of Programming does Python support?",
+    "answer" : "all of the mentioned",
+    "options" : ["object-oriented programming", "structured programming", "functional programming", "all of the mentioned"],
+    "quizType": "MultipleChoice"
+}, {
+    "question": "What will be the output of the following Python code?\n```py\nx = 'abcd'\nfor i in x:\n\tprint(i.upper())\n```",
+    "answer": "ABCD",
+    "options": ["abcd", "ABCD", "error"],
+    "quizType": "MultipleChoice"
+},
+{
+    "question": "What will be the output of the following Python program?\n```py\ni = 0\nwhile i < 5:\n\tprint(i)\n\ti += 1\n\tif i == 3:\n\t\tbreak\nelse:\n\tprint(0)\n```",
+    "answer": "0120",
+    "options": ["error", "012", "0120", "all of the mentioned"],
+    "quizType": "MultipleChoice"
+},
+{
+    "quizType": "CompleteSequence",
+    "answer" : "hello"
+}, {
+    "quizType": "CompleteSequence",
+    "answer": "hi"
+}, {
+    "quizType": "CompleteSequence",
+    "asnwer": "whats up nigga!"
+}
+]
