@@ -21,6 +21,8 @@ type Props =
       disabled: boolean;
       threeInRrow?: boolean;
       changePage: () => void;
+      sequenceOptions?: string[];
+      handleSequenceClick?: (item: string) => void;
     };
 export default function Footer(props: Props) {
   const isQuizType = props.type === "quiz";
@@ -61,7 +63,8 @@ export default function Footer(props: Props) {
         isQuizType &&
           props.status === "wrong" &&
           "bg-rose-100 dark:bg-rose-200 justify-between",
-        !isQuizType && !props.isFirstPage && "justify-between"
+        !isQuizType && !props.isFirstPage && "justify-between",
+        isQuizType && props.sequenceOptions && "items-center justify-center"
       )}
     >
       {!isQuizType && !props.isFirstPage && (
@@ -73,22 +76,46 @@ export default function Footer(props: Props) {
           Previous
         </Button>
       )}
-      {isQuizType &&
-        (props.status === "wrong" ? (
-          <div className="flex items-center gap-2 text-rose-600">
-            <XCircle className="lg:size-[28px]" />
-            <p className="text-rose-600 font-semibold leading-normal lg:text-lg">
-              Try Again
-            </p>
-          </div>
-        ) : props.status === "correct" ? (
-          <div className="flex items-center gap-2 text-green-600">
-            <CheckCircle className="lg:size-[28px]" />
-            <p className="text-green-600 font-semibold leading-normal lg:text-lg">
-              Nicely done!
-            </p>
-          </div>
-        ) : null)}
+      {isQuizType && (
+        <div
+          className={cn(
+            "flex items-center gap-2",
+            props.status === "correct" && "text-green-600",
+            props.status === "wrong" && "text-rose-600",
+            props.sequenceOptions && "absolute left-2 top-0 bottom-0 my-auto z-[4]"
+          )}
+        >
+          {props.status === "wrong" ? (
+            <>
+              <XCircle className="lg:size-[28px]" />
+              <p className="text-rose-600 font-semibold leading-normal lg:text-lg">
+                Try Again
+              </p>
+            </>
+          ) : props.status === "correct" ? (
+            <>
+              <CheckCircle className="lg:size-[28px]" />
+              <p className="text-green-600 font-semibold leading-normal lg:text-lg">
+                Nicely done!
+              </p>
+            </>
+          ) : null}
+        </div>
+      )}
+      {isQuizType && props.sequenceOptions && (
+        <div className="flex  gap-4 items-center flex-wrap w-[80%] mx-auto justify-center">
+          {props.sequenceOptions.map((item, index) => (
+            <Button
+              key={item + index}
+              onClick={() =>
+                props.handleSequenceClick && props.handleSequenceClick(item)
+              }
+            >
+              {item}
+            </Button>
+          ))}
+        </div>
+      )}
       <Button
         variant={
           isQuizType
@@ -101,7 +128,12 @@ export default function Footer(props: Props) {
         }
         onClick={handler}
         size="sm"
-        className={cn("lg:h-11 lg:px-8 ")}
+        className={cn(
+          "lg:h-11 lg:px-8",
+          isQuizType &&
+            props.sequenceOptions &&
+            "absolute bottom-2 right-3 z-[4]"
+        )}
         disabled={props.disabled}
       >
         {buttonText}

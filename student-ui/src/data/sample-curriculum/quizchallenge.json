@@ -21,13 +21,22 @@
     "quizType": "MultipleChoice"
 },
 {
+    "question": "What is the right way to assign a value to a variable?\n ##*Variable ${1} \"value\"*##",
     "quizType": "CompleteSequence",
-    "answer" : "hello"
+    "answer" : "Variable = \"value\"",
+    "options": [":", "=", ":="],
+    "language": "py"
 }, {
+    "question": "How do you iterate over a list in Python?\n##*${1} item/-in/-my_list:\n\tprint(item)*##",
     "quizType": "CompleteSequence",
-    "answer": "hi"
+    "answer": "for item/-in/-my_list:\n\tprint(item)",
+    "options": ["forEach", "for", "while"],
+    "language": "py"
 }, {
+    "question": "How do i check if someone is an adult or kid?\n ##*${1} age/->= ${2} :\n\tprint('adult')\n ${3} :\n\tprint('kid')*##",
     "quizType": "CompleteSequence",
-    "asnwer": "whats up nigga!"
+    "answer": "if age/->= 18 :\n\tprint('adult')\n else :\n\tprint('kid')",
+    "options": ["if", "18", "elif", "else"],
+    "language": "py"
 }
 ]
