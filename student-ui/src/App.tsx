@@ -14,6 +14,7 @@ import Learn from "./pages/(root)/Learn";
 import VerifyEmail from "./pages/(auth)/VerifyEmail";
 import Lesson from "./pages/(challenges)/Lesson";
 import Result from "./pages/(challenges)/Result";
+import Leaderboard from "./pages/(root)/Leaderboard";
 
 function App() {
   return (
@@ -25,7 +26,7 @@ function App() {
           <Route path="/learn/:id" element={<Learn/>}/>
           <Route path="/profile/:username"/>
           <Route path="/quests"/>
-          <Route path="/leaderboard"/>
+          <Route path="/leaderboard" element={<Leaderboard/>}/>
         </Route>
         <Route path="/challenge/:courseId/level/:levelId">
         <Route path="code"  element={<CodeChallenge />} />
