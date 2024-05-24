@@ -3,6 +3,8 @@ import { useNavigate, useParams, useSearchParams } from "react-router-dom";
 import React from "react";
 import { Spinner } from "@/components/ui/spinner";
 import Result from "@/components/result";
+import Streaks from "@/components/streaks";
+import { StreakNumber } from "@/providers/RootProvider";
 type ResultData = {
   result: {
     xpGained: number;
@@ -10,7 +12,8 @@ type ResultData = {
   };
   streaks?: {
     currentStreak: number;
-    currentDay: Date;
+    currentDay: number;
+    streakDays: StreakNumber[];
   };
   badge?: {
     badgeImg: string;
@@ -27,6 +30,7 @@ export default function ResultPage() {
   const [screen, setScreen] = React.useState<Screen>("result");
   const [data, setData] = React.useState<ResultData | null>(null);
   const availableKeys = React.useRef<Screen[]>([]);
+  console.log(data?.streaks?.currentDay);
   // screen(1): Result -> total xp, hints left (shown)
   // screen(2): Streaks (if user has unlocked streak by completing this challenge)
   // screen(3): Badge unlocked (show the badge a user has unlocked by completing challenge)
@@ -39,7 +43,8 @@ export default function ResultPage() {
       },
       streaks: {
         currentStreak: 8,
-        currentDay: new Date(),
+        currentDay: new Date().getDay(),
+        streakDays: [1,1,1,1,1,1,0]
       },
     };
     // get the available keys from result data and store in a ref
@@ -78,7 +83,14 @@ export default function ResultPage() {
       ) : screen === "badge" ? (
         "Badge Screen"
       ) : (
-        "Streaks Screen"
+        <div className="flex items-center justify-center flex-col h-[80vh]">
+        <Streaks
+         currentCount={data?.streaks?.currentStreak ?? 0}
+          currentDay={data?.streaks?.currentDay ?? 0}
+          streakDays={data?.streaks?.streakDays ?? []}
+          playAnimation
+        />
+        </div>
       )}
       <footer
         className={

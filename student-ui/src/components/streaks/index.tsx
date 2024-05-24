@@ -18,25 +18,32 @@ export default function Streaks({
 }: Props) {
   const days = ["S", "M", "T", "W", "T", "F", "S"];
   return (
-    <div className="flex items-center space-x-2">
+    <div className="flex items-center flex-col justify-center gap-3">
       {/* Current Streak Count with a lottie animation.*/}
       {/* Calendar showing days missed and days you learned */}
       {playAnimation && (
+        <>
+       
         <div className="relative">
             {/* The text should have a black box shadow */}
           {/* The Current Streak number with a black box box shadow. absolutely positioned to the top of the lottie animation. */}
-          <p className="absolute top-0  left-0 right-0 text-2xl font-bold text-center text-white ">
+          <p style={{textShadow: "3px 3px black"}} className="absolute top-[40%] left-2/4 -translate-x-2/4 -translate-y-2/4  w-fit  z-[8] text-3xl font-bold text-center  ">
             {currentCount}
           </p>
           <Lottie
-            style={{ width: "90px", height: "90px" }}
+            /* style={{ width: "90px", height: "90px" }} */
             options={{
-              loop: false,
+              loop: true,
               autoplay: true,
               animationData: StreaksAnimation,
             }}
+            height={150}
+            width={150}
+
           />
         </div>
+          <p className="bg-clip-text my-2 text-transparent font-medium text-xl bg-gradient-to-r from-orange-500 to-yellow-600">day streak</p>
+          </>
       )}
       <div className="flex items-center space-x-2">
         {streakDays.map((streakValue, index) => (
@@ -45,7 +52,7 @@ export default function Streaks({
               key={index}
               className={cn(
                 "flex items-center justify-center w-8 h-8 text-white rounded-full bg-transparent border",
-                currentDay === index && "border-[3px]",
+                currentDay === index && "border-[4px] border-orange-500",
                 streakValue === 1 && "bg-green-500",
                 streakValue === 2 && "bg-blue-500"
               )}
