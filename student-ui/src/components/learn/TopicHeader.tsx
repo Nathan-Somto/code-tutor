@@ -24,7 +24,7 @@ export default function TopicHeader({
   return (
     <header
       className={cn(
-        "sticky w-full flex top-0 z-[51] gap-2 mb-4 items-center h-28 py-2 px-5",
+        "sticky w-full flex  z-[51] gap-2 mb-4 top-0 items-center h-28 py-2 px-5 lg:rounded-md",
         isUnlocked && backgrounds[index % backgrounds.length],
         !isUnlocked && "bg-neutral-600 text-neutral-300"
       )}

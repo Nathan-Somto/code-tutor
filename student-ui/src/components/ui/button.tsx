@@ -21,7 +21,8 @@ const buttonVariants = cva(
         "secondary-outline": " bg-background text-secondary/80 hover:text-secondary ",
         ghost: "hover:bg-accent hover:text-accent-foreground",
         super: "bg-accent text-accent-foreground border-[rgb(240,208,0)] ring-[rgb(240,208,0)] ring-offset-[rgb(240,208,0)]  hover:border-[rgba(240,208,0,0.7)] border-b-4 hover:border-b-2 hover:ring-[rgba(240,208,0,0.7)]",
-        link: "text-primary underline-offset-4 hover:underline border-none ring-none ring-offset-transparent ring-transparent"
+        link: "text-primary underline-offset-4 hover:underline border-none ring-none ring-offset-transparent ring-transparent ",
+        transparent: "border-none ring-0 ring-offset-transparent hover:bg-slate-800 focus-visible:ring-none focus-visible:ring-transparent focus-visible:ring-offset-none "
       },
       size: {
         default: "h-10 px-4 py-2",

@@ -5,6 +5,7 @@ import Courses from "../../assets/sidebar/courses.svg";
 import Leaderboard from "../../assets/sidebar/leaderboard.svg";
 import Learn from "../../assets/sidebar/learn.svg";
 import Quests from "../../assets/sidebar/quests.svg";
+import { RootProps, useRoot } from "@/providers/RootProvider";
 type Props = {
   className?: string;
 };
@@ -35,7 +36,8 @@ const data: Parameters<typeof SidebarItem>[number][] = [
   },
 ];
 export default function Sidebar({ className = "" }: Props) {
-  const currentCourse = { id: "1234567", label: "python" };
+  // const currentCourse = { id: "1234567", label: "python" };
+  const {data:{currentCourse}} = useRoot() as RootProps;
   return (
     <div
       className={cn(
@@ -44,8 +46,8 @@ export default function Sidebar({ className = "" }: Props) {
       )}
     >
       <Link
-        to={`/learn/${currentCourse.id}`}
-        className="py-3 text-primary tracking-tighter text-2xl mb-5 block"
+        to={`/learn/${currentCourse}`}
+        className="py-3  tracking-tighter text-2xl mb-5 block font-semibold bg-clip-text text-transparent bg-gradient-to-r from-green-400 via-indigo-500 to-purple-500"
       >
         Code Tutor
       </Link>
@@ -57,7 +59,7 @@ export default function Sidebar({ className = "" }: Props) {
           return (
             <SidebarItem
               {...item}
-              href={item.href + "/" + currentCourse.id}
+              href={item.href + "/" + currentCourse}
               key={item.href}
             />
           );

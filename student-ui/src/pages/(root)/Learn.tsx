@@ -77,7 +77,7 @@ setTimeout(() => {
     );
   }
   return (
-    <div className="pb-5 px-0 -mt-3">
+    <div className="pb-5 lg:px-6 px-0 -mt-3">
       {topics.map((topic, index) => (
         <Topic
           topic={{ ...topic.topic, index }}

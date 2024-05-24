@@ -3,6 +3,7 @@ import { Check, Info } from "lucide-react";
 import { cn } from "@/utils";
 import { Progress } from "../ui/progress";
 import { TooltipProvider, TooltipContent, TooltipTrigger, Tooltip } from "../ui/tooltip";
+import { RootProps,useRoot } from "@/providers/RootProvider";
 
 type Props = {
   title: string;
@@ -26,10 +27,16 @@ export  default function Card ({
   handleInfoClick
 }: Props){
     const navigate = useNavigate();
+    const {setData} = useRoot() as RootProps;
     function handleClick(){
         // store current course in global store.
         // navigate to its learn page
-        navigate(`/learn/${id}`)
+        setData(prev => ({
+          ...prev,
+          currentCourse: id,
+        }));
+        localStorage.setItem('root-courseId', id);
+        navigate(`/learn/${id}`);
     }
   return (
     <div

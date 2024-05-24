@@ -2,66 +2,29 @@ import { X } from "lucide-react";
 import { Button } from "../ui/button";
 import { Progress } from "../ui/progress";
 import React from "react";
-import LightBulb from "@/assets/hints.svg"
 import GreenMonster from "@/assets/green-monster.jpeg"
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogTrigger } from "../ui/dialog";
 import { useNavigate, useParams } from "react-router-dom";
+import HintsButton from "../hintsButton";
 type Props = {
   progress: number;
   hintsLeft: number;
   hintsRefreshDate: Date;
   topicName: string;
   isLesson: boolean;
+  openHintBox?: () => void;
 };
-const MAX_NUMBER_OF_HINTS = 5;
 export default function Header({
   progress,
   hintsLeft=-1,
   hintsRefreshDate,
   topicName,
-  isLesson
+  isLesson,
+  openHintBox
 }: Props) {
   const {courseId} = useParams();
-  const timerId = React.useRef<NodeJS.Timeout | undefined>();
-  const [timeLeft, setTimeLeft] = React.useState("00:00:00");
-  const [timerHasStarted, setTimerHasStarted] = React.useState(false);
-  const [hints, setHints] = React.useState(hintsLeft);
   const [openModal, setOpenModal] = React.useState(false);
   const navigate = useNavigate()
-  React.useEffect(() => {
-    //@Todo: stop the timer when i unmount.
-    if (hints === 0) {
-      setTimerHasStarted(true);
-      startTimer();
-    }
-    return  () => {
-      if(timerId.current && timerHasStarted){
-        clearInterval(timerId.current);
-      }
-    }
-  }, [hints]);
-  function startTimer() {
-    // timer format: hh:mm:ss
-    // count till we reach hintsRefreshDate
-    const id = setInterval(() => {
-      console.log("timer started!");
-      const now = new Date();
-      const timeDiff = hintsRefreshDate.getTime() - now.getTime()
-      if(timeDiff <= 0){
-        setTimerHasStarted(false);
-        setHints(MAX_NUMBER_OF_HINTS);
-        clearInterval(id);
-      }
-      let hours = Math.abs(hintsRefreshDate.getHours() - now.getHours()).toString().padStart(2, '0');
-      let minutes = Math.abs(hintsRefreshDate.getMinutes() - now.getMinutes()).toString().padStart(2, '0');
-      let seconds = Math.abs(hintsRefreshDate.getSeconds() - now.getSeconds()).toString().padStart(2, '0');
-      const format = `${hours}:${minutes}:${seconds}`;
-      setTimeLeft(format);
-
-    }, 1000);
-    timerId.current = id;
-    return id;
-  }
   async function handleSessionEnd(){
     // store the user's current progress (get this from the store)
     // redirect to the learn page
@@ -93,10 +56,11 @@ export default function Header({
       <div className="w-[70%] flex-shrink-0">
         <Progress value={progress} className="w-full h-3" />
       </div>
-      <div className="font-bold text-lg text-accent flex items-center gap-x-1">
-        <p>{timerHasStarted ? timeLeft : hints}</p>
-        <img src={LightBulb} alt="light-bulb" className="h-5 w-5 object-contain"/>
-      </div>
+        <HintsButton
+        hintsLeft={hintsLeft}
+        hintsRefreshDate={hintsRefreshDate}
+        handleClick={openHintBox}
+        />
     </header>
    
     </>
