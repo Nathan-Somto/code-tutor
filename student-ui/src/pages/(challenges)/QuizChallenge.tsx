@@ -208,7 +208,7 @@ export default function QuizChallenge() {
         <p>No Quiz Available</p>
       </div>
     );
-  }, [challenges, seqState, status]);
+  }, [challenges, seqState, status,userSelection]);
   function handleSubmit() {
     console.log("finish quiz, show result page, proceed to a new level.");
     navigate(`/challenge/${courseId}/level/${levelId}/result?type=quiz`);
