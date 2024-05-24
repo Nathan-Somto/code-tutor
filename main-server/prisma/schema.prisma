@@ -130,7 +130,7 @@ model QuizChallenge {
   id       String   @id @default(auto()) @map("_id") @db.ObjectId
   level    Level    @relation(fields: [levelId], references: [id])
   levelId  String   @db.ObjectId
-  question String
+  question String?
   answer   String
   options  String[]
   quizType QuizType @default(MULTIPLE_CHOICE)

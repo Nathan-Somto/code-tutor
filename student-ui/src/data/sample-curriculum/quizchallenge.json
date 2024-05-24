@@ -38,5 +38,25 @@
     "answer": "if age/->= 18 :\n\tprint('adult')\n else :\n\tprint('kid')",
     "options": ["if", "18", "elif", "else"],
     "language": "py"
-}
+},
+{
+    "quizType": "MatchingPairs",
+    "answer": "int=Integer;str=String;float=Floating point;bool=Boolean;list=List;dict=Dictionary;"
+  },
+  {
+    "quizType": "MatchingPairs",
+    "answer": "for=Loop;while=Conditional Loop;break=Exit Loop;continue=Skip Iteration;range=Sequence Generator;enumerate=Index Tracker;"
+  },
+  {
+    "quizType": "MatchingPairs",
+    "answer": "def=Define Function;return=Output Value;lambda=Anonymous Function;args=Variable Arguments;kwargs=Keyword Arguments;docstring=Function Documentation;"
+  },
+  {
+    "quizType": "MatchingPairs",
+    "answer": "PEP8=Coding Standards;__init__=Constructor;self=Instance Reference;yield=Generator;try=Exception Handling;with=Context Manager;"
+  },
+  {
+    "quizType": "MatchingPairs",
+    "answer": "Guido van Rossum=Creator;1991=First Release;PyPI=Package Index;pip=Package Installer;PEP=Python Enhancement Proposal;Zen of Python=Guiding Principles;"
+  }
 ]

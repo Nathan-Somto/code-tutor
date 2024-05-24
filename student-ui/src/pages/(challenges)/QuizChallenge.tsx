@@ -21,7 +21,7 @@ type QuizChallenges = (
       question: string;
       language: string;
     }
-  | { quizType: "MatchingPairs"; answer: string; question: string }
+  | { quizType: "MatchingPairs"; answer: string; }
 )[];
 export default function QuizChallenge() {
   const [status, setStatus] = React.useState<"correct" | "wrong" | null>(null);
@@ -141,6 +141,7 @@ export default function QuizChallenge() {
   }
   function replaceDynamicVars() {
     const quiz = challenges[currChallenge];
+    if(quiz.quizType !== 'CompleteSequence') return ''
     let userAnswer = quiz.question;
     for (const key in seqState.values) {
       if (quiz.quizType === "CompleteSequence") {
