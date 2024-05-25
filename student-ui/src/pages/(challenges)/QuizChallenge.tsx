@@ -7,6 +7,9 @@ import quizChallenges from "@/data/sample-curriculum/quizchallenge.json";
 import { CompleteSequence } from "@/components/quiz/CompleteSequence";
 import { extractBlocks } from "@/utils/extractBlocks";
 import { getDynamicVars } from "@/utils/getDynamicVars";
+import { extractAndShufflePairs } from "@/utils/extractAndShufflePairs";
+import MatchingPairs from "@/components/quiz/MatchingPairs";
+import { extractKeysAndValues } from "@/utils/extractKeysAndValue";
 type QuizChallenges = (
   | {
       quizType: "MultipleChoice";
@@ -21,21 +24,39 @@ type QuizChallenges = (
       question: string;
       language: string;
     }
-  | { quizType: "MatchingPairs"; answer: string; }
+  | { quizType: "MatchingPairs"; answer: string }
 )[];
+export type Status = "correct" | "wrong" | null;
+type PairState = {
+  answerMap: { [x: string]: string };
+  selectedPairs: { [x: string]: Status };
+  keys: string[];
+  values: string[];
+};
+type SeqState = {
+  values: {
+    [x: number]: string;
+  };
+  options: string[];
+  availableVars: number[];
+};
 export default function QuizChallenge() {
-  const [status, setStatus] = React.useState<"correct" | "wrong" | null>(null);
+  const [status, setStatus] = React.useState<Status>(null);
   const [currChallenge, setCurrChallenge] = React.useState(-1); // index of current challenge.
   const [userSelection, setUserSelection] = React.useState<string>("");
   const [isCompleted, setIsCompleted] = React.useState<boolean>(false);
   const [challenges, setChallenges] = React.useState<QuizChallenges>([]);
-  const [seqState, setSeqState] = React.useState<{
-    values: {
-      [x: number]: string;
-    };
-    options: string[];
-    availableVars: number[];
-  }>({ values: {}, options: [], availableVars: [] });
+  const [seqState, setSeqState] = React.useState<SeqState>({
+    values: {},
+    options: [],
+    availableVars: [],
+  });
+  const [pairState, setPairState] = React.useState<PairState>({
+    answerMap: {},
+    selectedPairs: {},
+    keys: [],
+    values: [],
+  });
   const failCount = React.useRef(0);
   const { levelId, courseId } = useParams();
   const navigate = useNavigate();
@@ -48,9 +69,12 @@ export default function QuizChallenge() {
           item.quizType === "MatchingPairs"
       ) as QuizChallenges;
       setChallenges(quizzes);
-      let challengeNumber: string | null | number = localStorage.getItem(`challenge/${courseId}/level/${levelId}/quiz`);
+      let challengeNumber: string | null | number = localStorage.getItem(
+        `challenge/${courseId}/level/${levelId}/quiz`
+      );
       challengeNumber = challengeNumber === null ? 0 : +challengeNumber;
       handleSeqState(quizzes, challengeNumber);
+      handlePairState(quizzes, challengeNumber);
       setCurrChallenge(challengeNumber);
     }
   }, []);
@@ -58,6 +82,7 @@ export default function QuizChallenge() {
     // first execute after the first page change.
     if (currChallenge > 0) {
       handleSeqState(challenges, currChallenge);
+      handlePairState(challenges, currChallenge);
     }
   }, [currChallenge]);
   const handleSeqState = React.useCallback(
@@ -79,10 +104,25 @@ export default function QuizChallenge() {
     },
     []
   );
-  // we need to track our current quiz challenge
-  // what is it status
-  // if the user fails the question twice advise them to use a hint or review the previous lesson.
-  // use a pop up for this
+  const handlePairState = React.useCallback(
+    (quizzes: QuizChallenges, index: number) => {
+      if (index < 0 || index > quizzes.length) {
+        return;
+      }
+      if (quizzes.length > 0 && quizzes[index].quizType === "MatchingPairs") {
+        const { pair1: keys, pair2: values } = extractAndShufflePairs(
+          quizzes[index].answer
+        );
+        setPairState({
+          answerMap: extractKeysAndValues(quizzes[index].answer),
+          selectedPairs: {},
+          keys,
+          values,
+        });
+      }
+    },
+    []
+  );
   function handleChoiceSelect(option: string) {
     if (status !== null) {
       setStatus(null);
@@ -141,7 +181,7 @@ export default function QuizChallenge() {
   }
   function replaceDynamicVars() {
     const quiz = challenges[currChallenge];
-    if(quiz.quizType !== 'CompleteSequence') return ''
+    if (quiz.quizType !== "CompleteSequence") return "";
     let userAnswer = quiz.question;
     for (const key in seqState.values) {
       if (quiz.quizType === "CompleteSequence") {
@@ -153,16 +193,34 @@ export default function QuizChallenge() {
     }
     return userAnswer;
   }
+  const disableFooter = React.useMemo(() => {
+    if (challenges.length === 0) return false;
+    return challenges[currChallenge].quizType === "MatchingPairs"
+      ? Object.values(pairState.answerMap).length !==
+          Object.values(pairState.selectedPairs).length / 2
+      : false;
+  }, [currChallenge, pairState, challenges]);
+  function checkCorrectPairing() {
+    return Object.values(pairState.selectedPairs).every(
+      (item) => item === "correct"
+    );
+  }
   function checkSelection() {
+    const currentQuiz = challenges[currChallenge];
     let userAnswer: string | undefined;
-    if (challenges[currChallenge].quizType === "CompleteSequence") {
-      const {code} = extractBlocks(replaceDynamicVars());
+    let isCorrectPairing: boolean = false;
+    if (currentQuiz.quizType === "CompleteSequence") {
+      const { code } = extractBlocks(replaceDynamicVars());
       userAnswer = code.trim();
+    }
+    if (currentQuiz.quizType === "MatchingPairs") {
+      isCorrectPairing = checkCorrectPairing();
     }
     // if complete sequence replace the dynamic vars in the question with userSelection
     if (
-      userSelection === challenges[currChallenge].answer ||
-      userAnswer === challenges[currChallenge].answer
+      userSelection === currentQuiz.answer ||
+      userAnswer === currentQuiz.answer ||
+      isCorrectPairing
     ) {
       setStatus("correct");
       // move to next challenge
@@ -177,6 +235,22 @@ export default function QuizChallenge() {
       setStatus("wrong");
       failCount.current += 1;
     }
+  }
+  function handlePairStatus(key: string, value: string) {
+    const status: Status =
+      pairState.answerMap[key] === value ? "correct" : "wrong";
+    setPairState((prev) => ({
+      answerMap: {
+        ...prev.answerMap,
+      },
+      selectedPairs: {
+        ...prev.selectedPairs,
+        [key]: status,
+        [value]: status,
+      },
+      keys: [...prev.keys],
+      values: [...prev.values],
+    }));
   }
   const getComp = React.useCallback(() => {
     if (currChallenge < 0 || currChallenge >= challenges.length) return null;
@@ -204,12 +278,22 @@ export default function QuizChallenge() {
         />
       );
     }
+    if (challenge.quizType === "MatchingPairs") {
+      return (
+        <MatchingPairs
+          pair1={pairState.keys}
+          pair2={pairState.values}
+          handlePairStatus={handlePairStatus}
+          selectedPairs={pairState.selectedPairs}
+        />
+      );
+    }
     return (
       <div>
         <p>No Quiz Available</p>
       </div>
     );
-  }, [challenges, seqState, status,userSelection]);
+  }, [challenges, seqState, status, userSelection, pairState]);
   function handleSubmit() {
     console.log("finish quiz, show result page, proceed to a new level.");
     navigate(`/challenge/${courseId}/level/${levelId}/result?type=quiz`);
@@ -217,7 +301,10 @@ export default function QuizChallenge() {
   function changePage() {
     setStatus(null);
     //@Todo: hash the url for safety
-    localStorage.setItem(`challenge/${courseId}/level/${levelId}/quiz`,(currChallenge + 1).toString());
+    localStorage.setItem(
+      `challenge/${courseId}/level/${levelId}/quiz`,
+      (currChallenge + 1).toString()
+    );
     setCurrChallenge((prev) => prev + 1);
   }
   return (
@@ -233,7 +320,7 @@ export default function QuizChallenge() {
       <Footer
         type="quiz"
         onCheck={checkSelection}
-        disabled={false}
+        disabled={disableFooter}
         isCompleted={isCompleted}
         onSubmit={handleSubmit}
         status={status}
