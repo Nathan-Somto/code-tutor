@@ -11,7 +11,7 @@ import {
 import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar'
 </script>
 <template>
-  <header class="flex items-center justify-between mb-6">
+  <header class="flex items-center justify-between mb-6 py-6 h-12 w-full px-4">
     <h1 class="text-2xl font-bold">Dashboard</h1>
     <div class="flex items-center gap-4">
       <Button size="sm">
@@ -24,7 +24,7 @@ import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar'
       </Button>
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
-          <Avatar class="h-9 w-9">
+          <Avatar class="h-10 w-10 border">
             <AvatarImage src="/placeholder.svg" alt="@shadcn" />
             <AvatarFallback>JP</AvatarFallback>
             <span class="sr-only">Toggle user menu</span>

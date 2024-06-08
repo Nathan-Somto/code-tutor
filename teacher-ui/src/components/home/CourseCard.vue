@@ -1,5 +1,5 @@
 <template>
-  <RouterLink :to='`/course/${id}`'>
+  <RouterLink :to='`/courses/${id}`'>
     <Card>
       <CardContent class="flex items-center justify-between py-2">
         <div class="flex items-center gap-4">

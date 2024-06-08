@@ -1,4 +1,8 @@
 <script setup lang="ts">
+import { Button } from '@/components/ui/button'
+import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card'
+import { Input } from '@/components/ui/input'
+import {ChevronLeft} from 'lucide-vue-next';
 // write all the missing code here
 import { ref } from 'vue';
 // import the $router stuff here
@@ -12,68 +16,57 @@ const password = ref('');
 // create login function here
 const login = () => {
   console.log('login');
+  $router.push('/home');
 };
 </script>
 <template>
     <div
       class="h-screen flex w-full"
-      id="page-login"
     >
-      <div class="vx-col sm:w-1/2 md:w-1/2 lg:w-3/4 xl:w-3/5 mx-auto self-center">
-        <div class="back-home" v-on:click="$router.push('/home')">
+      <div class=" sm:w-1/2 md:w-1/2 lg:w-3/4 xl:w-3/5 mx-auto self-center">
+        <Button class="fixed top-0 left-0 my-2 ml-2 " size='icon' @click="() => $router.push('/home')">
+        <ChevronLeft/>
+        </Button>
+        <Card class="w-full max-w-sm mx-auto py-3">
+        <div
+          class="hidden sm:hidden md:hidden lg:block lg:w-1/2 mx-auto self-center"
+        >
+          <img
+            src="@/assets/authentication.png"
+            alt="login"
+            class="mx-auto"
+          />
         </div>
-          <div slot="no-body" class="full-page-bg-color">
-            <div class="">
-              <div
-                class="hidden sm:hidden md:hidden lg:block lg:w-1/2 mx-auto self-center"
-              >
-                <img
-                  src="@/assets/authentication.png"
-                  alt="login"
-                  class="mx-auto"
-                />
-              </div>
-              <div
-                class="sm:w-full md:w-full lg:w-1/2 mx-auto self-center"
-              >
-                
-                  
-                      <input
-                        name="email"
-                        :label-placeholder="email"
-                        v-model="email"
-                        class="w-full no-icon-border"
-                      />
-                      <span class="text-danger text-sm">{{ undefined }}</span>
-                    
-                  
-                      <input
-                        type="password"
-                        name="password"
-                        :label-placeholder="password"
-                        v-model="password"
-                        class="w-full mt-6 no-icon-border"
-                      />
-                    <div class="flex flex-wrap justify-between my-5">
-                      <input
-                        v-model="remember_me"
-                        class="mb-3"
-                        type="checkbox"
-                        
-                      />
-                        {{remember_me}}
-                      
-                      <RouterLink :disabled="true" to="/pages/forgot-password"
-                        >Forgot Password?</RouterLink
-                      >
-                    </div>
-                    <button
-                        class=""
-                       @click="login"
-                      ></button>   
-                </div>
-              </div>
-            </div>
-          </div>
+    <CardHeader>
+      <CardTitle class="text-2xl">
+        Login
+      </CardTitle>
+      <CardDescription>
+        Enter your email below to login to your account.
+      </CardDescription>
+    </CardHeader>
+    <CardContent class="grid gap-4">
+      <div class="grid gap-2">
+        <Label for="email">Email</Label>
+        <Input id="email" type="email" placeholder="m@example.com" required />
       </div>
+      <div class="grid gap-2">
+        <Label for="password">Password</Label>
+        <Input id="password" type="password" required placeholder='******' />
+      </div>
+    </CardContent>
+    <CardFooter>
+      <Button class="w-full" @click='login'>
+        Sign in
+      </Button>
+    </CardFooter>
+    <div class="mt-2 text-center text-sm">
+        Don't have an account?
+        <RouterLink to="/register" class="underline opacity-80">
+          Sign up
+        </RouterLink>
+    </div>
+  </Card>
+   </div>
+  </div>
   </template>

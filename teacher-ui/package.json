@@ -13,10 +13,12 @@
     "format": "prettier --write src/"
   },
   "dependencies": {
+    "@guolao/vue-monaco-editor": "^1.5.1",
     "@vueuse/core": "^10.10.0",
     "class-variance-authority": "^0.7.0",
     "clsx": "^2.1.1",
     "lucide-vue-next": "^0.383.0",
+    "md-editor-v3": "^4.16.6",
     "pinia": "^2.1.7",
     "radix-vue": "^1.8.2",
     "tailwind-merge": "^2.3.0",

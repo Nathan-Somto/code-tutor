@@ -1,10 +1,9 @@
 <script setup lang="ts">
-import Header from '@/components/home/Header.vue'
 import StatsCard from '@/components/home/StatsCard.vue'
 import { Input } from '@/components/ui/input'
 import { SearchIcon } from 'lucide-vue-next'
 import CourseCard from '@/components/home/CourseCard.vue'
-import Sidebar from "@/components/layout/sidebar.vue"
+import {DashboardHeader} from '@/components/dashboard-header'
 const data = [
   {
     id: 1,
@@ -31,10 +30,18 @@ const onButtonClick = (id: string) => {
 </script>
 
 <template>
-  <Sidebar/>
-  <div class="min-h-screen ml-[250px] w-[calc(100vw-250px)]">
+  <div>
+    <DashboardHeader title="Dashboard" showAvatar>
+      <Button size="sm">
+        <PlusIcon class="w-4 h-4 mr-2" />
+        Create Course
+      </Button>
+      <Button variant="secondary" size="sm">
+        <PenIcon class="w-4 h-4 mr-2" />
+        Contribute
+      </Button>
+    </DashboardHeader>
     <div class="w-full bg-gray-100 dark:bg-gray-950 p-4 md:p-6 lg:p-8">
-      <Header />
       <main>
         <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
           <StatsCard title="Students" :value="49" />
