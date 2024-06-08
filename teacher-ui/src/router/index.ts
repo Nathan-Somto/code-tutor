@@ -27,6 +27,15 @@ const router = createRouter({
           path: 'courses/:id/topics/:topicId/levels/lesson',
           name: 'newLesson',
           component: () => import('../views/NewLesson.vue')
+        }, {
+           path: 'courses/:id/topics/:topicId/levels/quiz',
+           name: "quiz",
+           component: () => import("../views/QuizView.vue")
+        },
+        {
+          path: 'courses/:id/topics/:topicId/levels/create-quiz',
+          name: "createQuiz",
+          component: () => import("../views/CreateQuizView.vue")
         }
       ]
     },
