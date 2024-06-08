@@ -1,0 +1,81 @@
+{
+    "topics": [
+        {
+            "name": "Introduction to Python",
+            "description": "This module introduces the basics of Python programming.",
+            "id": "topic1"
+        },
+        {
+            "name": "Advanced Python",
+            "description": "This module covers advanced topics in Python programming.",
+            "id": "topic2"
+        },
+        {
+            "name": "Python Data Structures",
+            "description": "This module explores Python's built-in data structures.",
+            "id": "topic3"
+        }
+    ],
+    "levels": {
+        "topic1": [
+            {
+                "name": "Python Basics",
+                "xp": 100,
+                "levelType": "Lesson",
+                "id": "level1-1"
+            },
+            {
+                "name": "Hello World",
+                "xp": 50,
+                "levelType": "Code",
+                "id": "level1-2"
+            },
+            {
+                "name": "Python Quiz 1",
+                "xp": 75,
+                "levelType": "Quiz",
+                "id": "level1-3"
+            }
+        ],
+        "topic2": [
+            {
+                "name": "Decorators",
+                "xp": 150,
+                "levelType": "Lesson",
+                "id": "level2-1"
+            },
+            {
+                "name": "Generators",
+                "xp": 150,
+                "levelType": "Lesson",
+                "id": "level2-2"
+            },
+            {
+                "name": "Advanced Python Quiz",
+                "xp": 100,
+                "levelType": "Quiz",
+                "id": "level2-3"
+            }
+        ],
+        "topic3": [
+            {
+                "name": "Lists and Tuples",
+                "xp": 120,
+                "levelType": "Lesson",
+                "id": "level3-1"
+            },
+            {
+                "name": "Dictionaries and Sets",
+                "xp": 120,
+                "levelType": "Lesson",
+                "id": "level3-2"
+            },
+            {
+                "name": "Data Structures Quiz",
+                "xp": 80,
+                "levelType": "Quiz",
+                "id": "level3-3"
+            }
+        ]
+    }
+}
