@@ -1,9 +1,10 @@
 <script setup lang="ts">
 import StatsCard from '@/components/home/StatsCard.vue'
 import { Input } from '@/components/ui/input'
-import { SearchIcon } from 'lucide-vue-next'
+import { SearchIcon, PlusIcon, PenIcon } from 'lucide-vue-next'
 import CourseCard from '@/components/home/CourseCard.vue'
 import {DashboardHeader} from '@/components/dashboard-header'
+import {Button} from "@/components/ui/button";
 const data = [
   {
     id: 1,

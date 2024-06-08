@@ -79,7 +79,7 @@ function applyNewIndex() {
       <template v-if="levels !== null && levels.length > 0">         
           <ul class="divide-y">
           <li v-for="level in levels" :key="level.id" class="flex items-center  cursor-pointer hover:bg-gray-200 rounded-md justify-between p-2">
-            <RouterLink :to="`/dashboard/courses/${$route.params.id}/topic/${element.id}`" class="flex items-center space-x-5">
+            <RouterLink :to="`/dashboard/courses/${$route.params.id}/topics/${element.id}`" class="flex items-center space-x-5">
               <component :is="IconMap[level.levelType]" class="w-5 h-5 text-gray-600" />
               <div>
                 <h4 class="font-semibold">{{ level.name }}</h4>
@@ -93,7 +93,7 @@ function applyNewIndex() {
         <p>No Levels Available</p>
       </div>
       <Button
-        @click="() => $router.push(`/dashboard/courses/${$route.params.id}/topic/new-level`)"
+        @click="() => $router.push(`/dashboard/courses/${$route.params.id}/topics/${element.id}/new-level`)"
         class="mx-auto my-3 block max-w-fit"
         >Add New Level</Button
       >

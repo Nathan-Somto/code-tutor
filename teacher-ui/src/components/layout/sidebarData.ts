@@ -4,7 +4,7 @@ export const data = (profileId: string) => ( [
     {
         text: "Home",
         icon: HomeIcon,
-        link: '/home'
+        link: '/dashboard'
     },
     {
     text: "Create Course",

@@ -2,10 +2,16 @@
 import {  UploadCloudIcon, ChevronLeft } from 'lucide-vue-next'
 import {Button} from "@/components/ui/button"
 import MatchingPairs from "@/components/quiz/MatchingPairs.vue"
+import MultipleChoice from "@/components/quiz/MultipleChoice.vue"
 import {ref, watch} from "vue"
 type QuizType =  "MULTIPLE CHOICE"|
   "COMPLETE SEQUENCE" |
-  "MATCHING PAIRS"
+  "MATCHING PAIRS";
+type MCQ = {
+    question: string;
+    answer: string;
+    options: string[];
+}
 const options: QuizType[] = [
     "MULTIPLE CHOICE",
   "COMPLETE SEQUENCE",
@@ -13,12 +19,25 @@ const options: QuizType[] = [
   ];
   const currentQuiz = ref<QuizType>('MATCHING PAIRS')
  const pairs = ref('');
+ const mcq = ref({
+    question: '',
+    answer: '',
+    options: ['']
+ })
 watch(currentQuiz, () => {
-    pairs.value = ''
+    pairs.value = '';
+    mcq.value = {
+    question: '',
+    answer: '',
+    options: ['']
+ }
 })
 const handleUpdatePairs = (updatedPairs: string) => {
   pairs.value = updatedPairs;
 };
+const handleUpdateMCQ = (updatedMCQ: MCQ) => {
+    mcq.value = updatedMCQ;
+}
 </script>
 <template>
     <header class="flex h-16 px-4 py-3 items-center justify-between">
@@ -48,6 +67,12 @@ const handleUpdatePairs = (updatedPairs: string) => {
                 <p class="text-sm opacity-80 w-[80%] mx-auto">use the form below to create a matching pairs quiz, (when done click publish)</p>
             </div>
         <MatchingPairs @update:pairs="handleUpdatePairs"/>
+        </template>
+        <template v-else-if="currentQuiz === 'MULTIPLE CHOICE' ">
+            <div class="my-7 text-center w-[90%] mx-auto">
+                <h2 class="text-xl mb-2 text-center font-medium">Multiple Choice</h2>             
+            </div>
+            <MultipleChoice @update:mcq="handleUpdateMCQ"/>
         </template>
     </section>
 </template>

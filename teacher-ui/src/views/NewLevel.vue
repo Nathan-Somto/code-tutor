@@ -5,11 +5,11 @@ import { useRouter, useRoute } from 'vue-router'
 import { cn } from '@/lib/utils'
 import { ref } from 'vue'
 import {DashboardHeader} from "@/components/dashboard-header"
-const redirectLink = ref('quiz-challenge')
+const redirectLink = ref('quiz')
 const $router = useRouter()
 const $route = useRoute()
 const redirect = () =>
-  $router.push(`/dashboard/courses/${$route.params.id}/levels/${redirectLink.value}`)
+  $router.push(`/dashboard/courses/${$route.params.id}/topics/${$route.params.topicId}/levels/${redirectLink.value}`)
 </script>
 <template>
     <DashboardHeader title="New Level" showAvatar/>
@@ -19,9 +19,9 @@ const redirect = () =>
       <RadioGroup :default-value="redirectLink" class="space-y-3" v-model="redirectLink">
         <div
           class="flex items-center space-x-5 border px-3 py-4 rounded-md hover:bg-gray-100"
-          :class="cn(redirectLink === 'quiz-challenge' && 'bg-gray-100')"
+          :class="cn(redirectLink === 'quiz' && 'bg-gray-100')"
         >
-          <RadioGroupItem id="redirect-link" value="quiz-challenge"  />
+          <RadioGroupItem id="redirect-link" value="quiz"  />
           <div class="flex flex-col">
             <label for="redirect-link" class="font-medium">Quiz Challenge</label>
             <p class="text-xs opacity-80">
@@ -31,9 +31,9 @@ const redirect = () =>
         </div>
         <div
           class="flex items-center space-x-5 border px-3 py-4 rounded-md hover:bg-gray-100 transition-all duration-250 ease-in-out"
-          :class="cn(redirectLink === 'code-challenge' && 'bg-gray-100')"
+          :class="cn(redirectLink === 'code' && 'bg-gray-100')"
         >
-          <RadioGroupItem id="redirect-link" value="code-challenge" />
+          <RadioGroupItem id="redirect-link" value="code" />
           <div class="flex flex-col">
             <label for="redirect-link" class="font-medium">Code Challenge</label>
             <p class="text-xs opacity-80">programming exercises with pre-defined test cases</p>
