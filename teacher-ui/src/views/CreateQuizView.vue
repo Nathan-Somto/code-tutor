@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import {  UploadCloudIcon, ChevronLeft } from 'lucide-vue-next'
+import {  SaveIcon, ChevronLeft } from 'lucide-vue-next'
 import {Button} from "@/components/ui/button"
 import MatchingPairs from "@/components/quiz/MatchingPairs.vue"
 import MultipleChoice from "@/components/quiz/MultipleChoice.vue"
@@ -57,7 +57,7 @@ const handleUpdateMCQ = (updatedMCQ: MCQ) => {
         </div>
        
         <div>
-            <Button class="gap-x-1.5"> <UploadCloudIcon :size="18" /> Publish</Button>
+            <Button variant="outline" class="gap-x-1.5"> <SaveIcon :size="18" /> Save</Button>
         </div>
     </header>
     <section>
