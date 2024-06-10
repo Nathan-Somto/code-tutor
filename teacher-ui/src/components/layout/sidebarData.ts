@@ -9,7 +9,7 @@ export const data = (profileId: string) => ( [
     {
     text: "Create Course",
     icon: PlusIcon,
-    link: '/course/new'
+    link: '/dashboard/courses/new'
 }, {
     text: "Profile",
     icon: UserIcon,
@@ -23,6 +23,6 @@ export const data = (profileId: string) => ( [
 {
     text: "Contribute",
     icon: PenIcon,
-    link: "/course/contribute"
+    link: "/dashboard/courses/contribute"
 }
 ] );

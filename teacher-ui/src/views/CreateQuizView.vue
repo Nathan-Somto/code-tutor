@@ -3,6 +3,7 @@ import {  SaveIcon, ChevronLeft } from 'lucide-vue-next'
 import {Button} from "@/components/ui/button"
 import MatchingPairs from "@/components/quiz/MatchingPairs.vue"
 import MultipleChoice from "@/components/quiz/MultipleChoice.vue"
+import CompleteSequence from "@/components/quiz/CompleteSequence.vue";
 import {ref, watch} from "vue"
 type QuizType =  "MULTIPLE CHOICE"|
   "COMPLETE SEQUENCE" |
@@ -73,6 +74,9 @@ const handleUpdateMCQ = (updatedMCQ: MCQ) => {
                 <h2 class="text-xl mb-2 text-center font-medium">Multiple Choice</h2>             
             </div>
             <MultipleChoice @update:mcq="handleUpdateMCQ"/>
+        </template>
+        <template v-else>
+            <CompleteSequence/>
         </template>
     </section>
 </template>

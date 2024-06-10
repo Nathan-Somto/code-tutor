@@ -26,6 +26,7 @@
     "vee-validate": "^4.12.8",
     "vue": "^3.4.21",
     "vue-code-highlight": "^0.7.8",
+    "vue-multiselect": "^3.0.0",
     "vue-router": "^4.3.0"
   },
   "devDependencies": {
