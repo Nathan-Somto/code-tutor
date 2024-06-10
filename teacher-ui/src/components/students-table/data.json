@@ -1,0 +1,103 @@
+[
+    {
+      "profile_photo": "https://randomuser.me/api/portraits/men/1.jpg",
+      "id": "1",
+      "name": "John Doe",
+      "username": "johndoe",
+      "currentLevel": 5,
+      "xp": 1200,
+      "totalCodeSubmissions": 45,
+      "streakCount": 10
+    },
+    {
+      "profile_photo": "https://randomuser.me/api/portraits/women/2.jpg",
+      "id": "2",
+      "name": "Jane Smith",
+      "username": "janesmith",
+      "currentLevel": 7,
+      "xp": 2000,
+      "totalCodeSubmissions": 60,
+      "streakCount": 15
+    },
+    {
+      "profile_photo": "https://randomuser.me/api/portraits/men/3.jpg",
+      "id": "3",
+      "name": "Robert Johnson",
+      "username": "robertjohnson",
+      "currentLevel": 4,
+      "xp": 900,
+      "totalCodeSubmissions": 35,
+      "streakCount": 8
+    },
+    {
+      "profile_photo": "https://randomuser.me/api/portraits/women/4.jpg",
+      "id": "4",
+      "name": "Emily Davis",
+      "username": "emilydavis",
+      "currentLevel": 6,
+      "xp": 1500,
+      "totalCodeSubmissions": 50,
+      "streakCount": 12
+    },
+    {
+      "profile_photo": "https://randomuser.me/api/portraits/men/5.jpg",
+      "id": "5",
+      "name": "Michael Brown",
+      "username": "michaelbrown",
+      "currentLevel": 3,
+      "xp": 700,
+      "totalCodeSubmissions": 25,
+      "streakCount": 5
+    },
+    {
+      "profile_photo": "https://randomuser.me/api/portraits/women/6.jpg",
+      "id": "6",
+      "name": "Jessica Wilson",
+      "username": "jessicawilson",
+      "currentLevel": 8,
+      "xp": 2200,
+      "totalCodeSubmissions": 65,
+      "streakCount": 17
+    },
+    {
+      "profile_photo": "https://randomuser.me/api/portraits/men/7.jpg",
+      "id": "7",
+      "name": "David Martinez",
+      "username": "davidmartinez",
+      "currentLevel": 5,
+      "xp": 1100,
+      "totalCodeSubmissions": 40,
+      "streakCount": 9
+    },
+    {
+      "profile_photo": "https://randomuser.me/api/portraits/women/8.jpg",
+      "id": "8",
+      "name": "Sarah Anderson",
+      "username": "sarahanderson",
+      "currentLevel": 9,
+      "xp": 2500,
+      "totalCodeSubmissions": 70,
+      "streakCount": 20
+    },
+    {
+      "profile_photo": "https://randomuser.me/api/portraits/men/9.jpg",
+      "id": "9",
+      "name": "James Thomas",
+      "username": "jamesthomas",
+      "currentLevel": 2,
+      "xp": 500,
+      "totalCodeSubmissions": 15,
+      "streakCount": 3
+    },
+    {
+      "profile_photo": "https://randomuser.me/api/portraits/women/10.jpg",
+      "id": "10",
+      "name": "Karen White",
+      "username": "karenwhite",
+      "currentLevel": 4,
+      "xp": 1000,
+      "totalCodeSubmissions": 30,
+      "streakCount": 7
+    }
+  ]
+  

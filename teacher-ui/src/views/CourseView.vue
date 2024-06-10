@@ -7,11 +7,14 @@ import Topic from '@/components/course/Topic.vue'
 import courseData from '@/components/course/data.json'
 import CreateTopicDialog from '@/components/modals/CreateTopicDialog.vue'
 import {onMounted} from "vue"
+import {useRouter, useRoute} from "vue-router"
 export type Topic = {
   id: string
   name: string
   description: string
 }
+const $router = useRouter()
+const $route = useRoute()
 const topics = ref<Topic[]>([])
 const open = ref(false)
 function addTopic(topic: Topic) {
@@ -26,6 +29,9 @@ function moveToIndex(oldOrder: number, newOrder: number) {
 }
 function updateOpen(newOpenValue: boolean){
   open.value = newOpenValue;
+}
+function redirectToEnrolledStudents(){
+  $router.push(`/dashboard/courses/${$route.params.id}/enrolled-students`)
 }
 // on mount set the topics in course data
 onMounted(() => {
@@ -45,7 +51,7 @@ onMounted(() => {
       <h1 class="text-2xl font-bold">Introduction to Python</h1>
     </div>
     <div class="flex items-center gap-4">
-      <Button variant="outline">
+      <Button variant="outline" @click="redirectToEnrolledStudents">
         <UsersIcon />
         View Students
       </Button>
