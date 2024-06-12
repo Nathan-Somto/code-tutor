@@ -1,0 +1,156 @@
+[
+    {
+        "language": "py",
+        "description": "a simple test for counting vowels in a string",
+        "functionCall": null,
+        "code": "def count_vowels(s):\n\tvowels = 'aeiou'\n\treturn sum(1 for char in s if char in vowels)\n\ninput_str = 'hello world'\noutput_count = count_vowels(input_str)\nprint(output_count)",
+        "tests": [
+          {
+            "input": null,
+            "description": "must count the number of vowels in 'hello world'",
+            "expectedOutput": "3",
+            "passed": null
+          }
+        ]
+      },
+      
+    {
+        "language": "py",
+        "description": "a simple test for reversing a string",
+        "functionCall": null,
+        "code": "def reverse_string(s):\n\treturn s[::-1]\n\ninput_str = 'hello'\noutput_str = reverse_string(input_str)\nprint(output_str)",
+        "tests": [
+          {
+            "input": null,
+            "description": "must reverse the string 'hello'",
+            "expectedOutput": "olleh",
+            "passed": null
+          }
+        ]
+      },
+       {
+        "language": "py",
+        "description": "a simple test for summing the squares of array elements",
+        "functionCall": "sum_of_squares",
+        "code": "def sum_of_squares(arr):\n\treturn sum(x**2 for x in arr)",
+        "tests": [
+          {
+            "input": "[1, 2, 3, 4, 5]",
+            "description": "must return the sum of squares",
+            "expectedOutput": "55",
+            "passed": null
+          },
+          {
+            "input": "[-1, -2, -3, -4, -5]",
+            "description": "must return the sum of squares",
+            "expectedOutput": "55",
+            "passed": null
+          }
+        ]
+      },
+       {
+        "language": "py",
+        "description": "a simple test for sorting",
+        "functionCall": "sort_my_basket",
+        "code": "def sort_my_basket(basket):\n\tbasket.sort()\n\treturn basket",
+        "tests": [
+          {
+            "input": "[]",
+            "description": "must be an empty array",
+            "expectedOutput": "[]",
+            "passed": null
+          },
+          {
+            "input": "[4,2,5,1,9,3]",
+            "description": "must be a sorted array",
+            "expectedOutput": "[1, 2, 3, 4, 5, 9]",
+            "passed": null
+          }
+        ]
+      },
+      {
+        "language": "java",
+        "description": "a simple test for adding one to each element in an array",
+        "functionCall": "Solution.addOneToEach",
+        "code": "public class Solution {\n\tpublic static int[] addOneToEach(int[] array) {\n\t\tfor (int i = 0; i < array.length; i++) {\n\t\t\tarray[i]++;\n\t\t}\n\t\treturn array;\n\t}\n}",
+        "tests": [
+          {
+            "input": "new int[]{}",
+            "description": "must handle an empty array",
+            "expectedOutput": "[]",
+            "passed": null
+          },
+          {
+            "input": "new int[]{1, 2, 3}",
+            "description": "must add one to each element",
+            "expectedOutput": "[2, 3, 4]",
+            "passed": null
+          }
+        ]
+      },
+      {
+        "language": "cpp",
+        "description": "a simple test for finding the maximum element in an array",
+        "functionCall": "findMax",
+        "code": "#include <vector>\nusing namespace std;\nint findMax(vector<int> arr) {\n\tint max = arr[0];\n\tfor(int i = 1; i < arr.size(); i++) {\n\t\tif(arr[i] > max) {\n\t\t\tmax = arr[i];\n\t\t}\n\t}\n\treturn max;\n}",
+        "tests": [
+          {
+            "input": "vector<int>{}",
+            "description": "must handle an empty array",
+            "expectedOutput": "0",  
+            "passed": null
+          },
+          {
+            "input": "vector<int>{1, 2, 3, 4, 5}",
+            "description": "must find the maximum element",
+            "expectedOutput": "5",
+            "passed": null
+          }
+        ]
+      },
+      {
+        "language": "go",
+        "description": "a simple test for summing elements in a slice",
+        "functionCall": "sumSlice",
+        "code": "package main\n\nfunc sumSlice(slice []int) int {\n\tsum := 0\n\tfor _, value := range slice {\n\t\tsum += value\n\t}\n\treturn sum\n}",
+        "tests": [
+          {
+            "input": "[]int{}",
+            "description": "must handle an empty slice",
+            "expectedOutput": "0",
+            "passed": null
+          },
+          {
+            "input": "[]int{1, 2, 3, 4}",
+            "description": "must sum the elements correctly",
+            "expectedOutput": "10",
+            "passed": null
+          }
+        ]
+      },
+      {
+        "language": "c",
+        "description": "a simple test for reversing a string",
+        "functionCall": null,
+        "code": "#include <stdio.h>\n#include <string.h>\n\nvoid reverseString(char* str) {\n\tint n = strlen(str);\n\tfor(int i = 0; i < n / 2; i++) {\n\t\tchar temp = str[i];\n\t\tstr[i] = str[n - i - 1];\n\t\tstr[n - i - 1] = temp;\n\t}\n}\n\nint main() {\n\tchar str1[] = \"hello\";\n\treverseString(str1);\n\tprintf(\"%s\\n\", str1);\n\n\tchar str2[] = \"world\";\n\treverseString(str2);\n\tprintf(\"%s\\n\", str2);\n\n\treturn 0;\n}",
+        "tests": [
+          {
+            "input": null,
+            "description": "reverse the string 'hello'",
+            "expectedOutput": "olleh\n",
+            "passed": null
+          },
+          {
+            "input": null,
+            "description": "reverse the string 'world'",
+            "expectedOutput": "dlrow\n",
+            "passed": null
+          }
+        ]
+      }
+      
+      
+      
+      
+      
+]

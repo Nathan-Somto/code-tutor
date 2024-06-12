@@ -6,19 +6,13 @@ const {info} = require("./info")
 const {spawn} = require("child_process");
 
 async function runCode({language = "", code = "", input = ""}) {
-    const timeout = 5;
-    console.log(language,code,input);
+    const timeout = 30;
     if (code === "")
         throw {
             status: 400,
             error: "No Code found to execute."
         }
 
-    if (language !== 'py')
-        throw {
-            status: 400,
-            error: `only python is supported`
-        }
 
     const {jobID} = await createCodeFile(language, code);
     const {compileCodeCommand, compilationArgs, executeCodeCommand, executionArgs, outputExt} = commandMap(jobID, language);
@@ -63,7 +57,7 @@ async function runCode({language = "", code = "", input = ""}) {
             }
         }, timeout * 1000);
 
-        if (input !== "") {
+        if (input !== "" && input !== null && input !== undefined) {
             input.split('\n').forEach((line) => {
                 executeCode.stdin.write(`${line}\n`);
             });

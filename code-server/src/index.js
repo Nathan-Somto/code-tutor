@@ -16,33 +16,7 @@ app.use(bodyParser.urlencoded({extended: true}));
 app.use(cors());
 
 
-app.get("/code-challenge/:foldername/starter-code", async(req,res) => {
-    try{
-        const {foldername} = req.params;
-        const folderPath = join(process.cwd(),'src', 'code-challenges', foldername, 'starter.py' )
-        if(existsSync(folderPath)){
-           res.sendFile(folderPath)
-           return;
-        }
-        
-    }catch(err){
 
-    }
-});
-app.get("/code-challenge/:foldername/challenge", async(req,res) => {
-    try{
-        const {foldername} = req.params;
-        const folderPath = join(process.cwd(), 'src', 'code-challenges', foldername, 'challenge.md' )
-        if(existsSync(folderPath)){
-           res.sendFile(folderPath)
-           return;
-        }
-       throw new Error("challenge does not exist");
-    }catch(err){
-        console.log(err.message);
-        sendResponse(res, 500, err);
-    }
-})
 app.post("/run-code", async (req, res) => {
     try {
         console.log("running code")
@@ -52,18 +26,18 @@ app.post("/run-code", async (req, res) => {
         sendResponse(res, err?.status || 500, err)
     }
 })
-app.post("/test-code/:id", async (req,res) => {
+app.post("/test-code", async (req,res) => {
     try {
-        const {code,language} = req.body;
-       const {id} = req.params;
-       const output = await testCode(language,code,id);
+        const {code,language, tests, functionCall} = req.body;
+       const output = await testCode({language,code,test_cases: tests, functionCall});
+       console.log(output)
        sendResponse(res,200,output);
     }catch(err){
-        sendResponse(res, err?.status || 500, err)
+        sendResponse(res, err?.status || 500, err.message)
     }
 })
 
-app.get('/list', async (req, res) => {
+app.get('/supported-languages', async (req, res) => {
     const body = []
 
     for(const language of supportedLanguages) {

@@ -1,10 +1,10 @@
 const sendResponse = (res, statusCode, body) => {
     const timeStamp = Date.now()
 
-    res.status(statusCode).send({
+    res.status(statusCode).json({
         timeStamp,
         status: statusCode,
-        ...body
+        body
     })
 }
 
