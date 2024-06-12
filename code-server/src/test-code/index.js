@@ -1,5 +1,5 @@
 const { runCode } = require("../run-code");
-const {languageWrappers} = require('./langauge-wrappers')
+const {languageWrappers} = require('./language-wrappers')
 
 
 
