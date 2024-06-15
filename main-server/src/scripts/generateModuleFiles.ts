@@ -47,14 +47,14 @@ function createFiles(entity: string){
         // create file called ${entity}.controller.ts
         const controllerMessage = `\"created ${entity}\"`;
         const controllerData = `
-        import {Request, Response} from "express";
-        const create${entity} = async (req:Request, res:Response)=>
+        import {Request, Response, NextFunction} from "express";
+        const create${entity} = async (req:Request, res:Response, next: NextFunction)=>
         {
             try{
                 res.json({message: ${controllerMessage}});
             }
             catch(err){
-                console.log(err);
+                next(err);
             }
         };
         export {

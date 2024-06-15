@@ -2,7 +2,6 @@ import { Request, Response, NextFunction, RequestHandler } from 'express';
 import { UnAuthorizedError } from '../errors/httpErrors';
 import jwt from "jsonwebtoken";
 import { prisma } from '../config/db';
-import {AuthorizedRequest} from '../types';
 export const  auth  = async (req: Request, res: Response, next: NextFunction) =>{
     try{
         const headers = req.headers['x-auth-token'];
@@ -26,7 +25,7 @@ export const  auth  = async (req: Request, res: Response, next: NextFunction) =>
         if(user === null){
             throw new UnAuthorizedError("user account does not exist");
         };
-        (req as AuthorizedRequest).user = {
+        req.user = {
             ...user,
             ...payload
         }

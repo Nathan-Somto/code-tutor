@@ -29,21 +29,24 @@ model User {
 }
 
 model Student {
-  id                String          @id @default(auto()) @map("_id") @db.ObjectId
-  user              User            @relation(fields: [userId], references: [id])
-  userId            String          @unique @db.ObjectId
-  username          String          @unique
+  id                String           @id @default(auto()) @map("_id") @db.ObjectId
+  user              User             @relation(fields: [userId], references: [id])
+  userId            String           @unique @db.ObjectId
+  username          String           @unique
   programme         String
-  xpPoints          Int             @default(0)
-  enrolledCourses   Course[]        @relation(fields: [enrolledCoursesId], references: [id])
-  enrolledCoursesId String[]        @db.ObjectId
-  unlockedBadges    Badge[]         @relation(fields: [badgeId], references: [id])
-  badgeId           String[]        @db.ObjectId
-  courseProgess     CourseProgess[]
-  streaks           Streaks[]
+  rank              Difficulty       @default(Easy)
+  xpPoints          Int              @default(0)
+  enrolledCourses   Course[]         @relation(fields: [enrolledCoursesId], references: [id])
+  enrolledCoursesId String[]         @db.ObjectId
+  unlockedBadges    Badge[]          @relation(fields: [badgeId], references: [id])
+  badgeId           String[]         @db.ObjectId
+  badgeProgress     BadgeProgress[]
+  rankProgress      RankProgress     @relation(fields: [rankProgressId], references: [id])
+  rankProgressId    String           @db.ObjectId
+  courseProgress    CourseProgress[]
+  streaks           Streaks?
   levelProgress     LevelProgress[]
   solutions         Solution[]
-  QuestProgress     QuestProgress[]
 }
 
 model Teacher {
@@ -74,44 +77,62 @@ model OTP {
 }
 
 model Course {
-  id                 String          @id @default(auto()) @map("_id") @db.ObjectId
+  id                 String           @id @default(auto()) @map("_id") @db.ObjectId
   title              String
-  decription         String
+  description        String
   image_url          String?
-  creator            Teacher         @relation("CreatedBy", fields: [creatorId], references: [id])
-  creatorId          String          @unique @db.ObjectId
-  contributorIds     String[]        @db.ObjectId
-  contributors       Teacher[]       @relation(fields: [contributorIds], references: [id])
-  enrolledStudents   Student[]       @relation(fields: [enrolledStudentsId], references: [id])
-  enrolledStudentsId String[]        @db.ObjectId
+  creator            Teacher          @relation("CreatedBy", fields: [creatorId], references: [id])
+  creatorId          String           @unique @db.ObjectId
+  contributorIds     String[]         @db.ObjectId
+  contributors       Teacher[]        @relation(fields: [contributorIds], references: [id])
+  enrolledStudents   Student[]        @relation(fields: [enrolledStudentsId], references: [id])
+  enrolledStudentsId String[]         @db.ObjectId
   Topic              Topic[]
-  CourseProgess      CourseProgess[]
+  CourseProgress     CourseProgress[]
+  language           String
+  Solution           Solution[]
 }
 
 model Topic {
-  id             String          @id @default(auto()) @map("_id") @db.ObjectId
-  course         Course          @relation(fields: [courseId], references: [id])
-  courseId       String          @db.ObjectId
+  id             String           @id @default(auto()) @map("_id") @db.ObjectId
+  course         Course           @relation(fields: [courseId], references: [id])
+  courseId       String           @db.ObjectId
   xpPointsNeeded Int
   name           String
   description    String
   Level          Level[]
-  CourseProgess  CourseProgess[]
+  order          Int
+  CourseProgress CourseProgress[]
 }
 
 model Level {
-  id            String          @id @default(auto()) @map("_id") @db.ObjectId
-  topic         Topic           @relation(fields: [topicId], references: [id])
-  topicId       String          @db.ObjectId
-  description   String
-  name          String
-  xp            Int
-  pass_mark     Int
-  mysteryLevel  Boolean
-  Lesson        Lesson?
-  codeChallenge CodeChallenge?
-  QuizChallenge QuizChallenge[]
-  CourseProgess CourseProgess[]
+  id             String           @id @default(auto()) @map("_id") @db.ObjectId
+  topic          Topic            @relation(fields: [topicId], references: [id])
+  topicId        String           @db.ObjectId
+  xp             Int
+  mysteryLevel   Boolean
+  order          Int
+  difficulty     Difficulty       @default(Easy)
+  Lesson         Lesson?
+  codeChallenge  CodeChallenge?
+  QuizChallenge  QuizChallenge[]
+  levelType      LevelType        @default(Lesson)
+  CourseProgress CourseProgress[]
+  LevelProgress  LevelProgress[]
+}
+
+enum Difficulty {
+  Easy
+  Medium
+  Hard
+  Advanced
+  Expert
+}
+
+enum LevelType {
+  Lesson
+  Quiz
+  Code
 }
 
 // for MATCHING_PAIRS the client will parse the answer and split into pairs
@@ -150,14 +171,15 @@ model Lesson {
 }
 
 model CodeChallenge {
-  id              String        @id @default(auto()) @map("_id") @db.ObjectId
-  level           Level?        @relation(fields: [levelId], references: [id])
-  levelId         String        @unique @db.ObjectId
-  starterFile     String
-  descriptionFile String
-  testCases       TestCase[]
-  solution        Solution[]
-  challengeType   ChallengeType @default(ALGORITHM)
+  id            String        @id @default(auto()) @map("_id") @db.ObjectId
+  level         Level?        @relation(fields: [levelId], references: [id])
+  levelId       String        @unique @db.ObjectId
+  starterFile   String
+  starterCode   String
+  language      String
+  testCases     TestCase[]
+  solution      Solution[]
+  challengeType ChallengeType @default(ALGORITHM)
 }
 
 enum ChallengeType {
@@ -175,71 +197,99 @@ model TestCase {
   description     String
 }
 
-// complete quests to unlock badges
+// to advance rank follows this format
+// Easy - Medium (complete 10 easy levels or 5 medium levels)
+// Medium - Hard (complete 20 medium levels or 30 easy levels)
+// Hard - Advanced (complete 5 hard levels or 30 medium)
+// Advanced - Expert (10 hard levels or 5 advanced levels)
+// this stores the rank progress  for a particular student (general user progress)
+model RankProgress {
+  id            String    @id @default(auto()) @map("_id") @db.ObjectId
+  studentId     String    @unique @db.ObjectId
+  EasyCount     Int
+  MediumCount   Int
+  HardCount     Int
+  AdvancedCount Int
+  ExpertCount   Int
+  Student       Student[]
+}
 
+// complete quests to unlock badges
+// 4 badges for m.v.p
+// Quiz Master (complete at least 10 quizzes) * (the number of 10's)
+// Code Ninja (complete at least 10 code challenges) * (the number of 10's)
+// Active Learner (complete at least 10 lessons) * (the number of 10's)
+// Xp Champ (gain at least 500xp) * (the number of 500's)
 model Badge {
-  id                String    @id @default(auto()) @map("_id") @db.ObjectId
-  name              String
+  id                String          @id @default(auto()) @map("_id") @db.ObjectId
+  name              String          @unique
   image             String
   description       String
-  studentsWithBadge Student[] @relation(fields: [studentId], references: [id])
-  studentId         String[]  @db.ObjectId
-  quests            Quest[]
+  studentsWithBadge Student[]       @relation(fields: [studentId], references: [id])
+  studentId         String[]        @db.ObjectId
+  studentProgress   BadgeProgress[]
 }
 
-model Quest {
-  id                 String          @id @default(auto()) @map("_id") @db.ObjectId
-  questObjective     String
-  Badge              Badge?          @relation(fields: [badgeId], references: [id])
-  badgeId            String?         @db.ObjectId
-  studentsProgresses QuestProgress[]
-  order              Int
+model BadgeProgress {
+  id              String   @id @default(auto()) @map("_id") @db.ObjectId
+  student         Student  @relation(fields: [studentId], references: [id])
+  studentId       String   @db.ObjectId
+  achieved        Boolean  @default(false)
+  achievementDate DateTime
+  Badge           Badge    @relation(fields: [badgeId], references: [id])
+  badgeId         String   @db.ObjectId
+  xTimes          Int      @default(0)
 }
 
-model QuestProgress {
-  id            String   @id @default(auto()) @map("_id") @db.ObjectId
-  student       Student  @relation(fields: [studentId], references: [id])
-  studentId     String   @db.ObjectId
-  quest         Quest    @relation(fields: [questId], references: [id])
-  questId       String   @db.ObjectId
-  completed     Boolean  @default(false)
-  completedDate DateTime
-}
-
-model CourseProgess {
-  id           String  @id @default(auto()) @map("_id") @db.ObjectId
-  currentTopic Topic   @relation(fields: [topicId], references: [id])
-  topicId      String  @db.ObjectId
-  currentLevel Level?  @relation(fields: [levelId], references: [id])
-  levelId      String? @db.ObjectId
-  student      Student @relation(fields: [studentId], references: [id])
-  studentId    String  @db.ObjectId
-  course       Course  @relation(fields: [courseId], references: [id])
-  courseId     String  @db.ObjectId
+model CourseProgress {
+  id                          String  @id @default(auto()) @map("_id") @db.ObjectId
+  currentTopic                Topic   @relation(fields: [topicId], references: [id])
+  topicId                     String  @db.ObjectId
+  currentLevel                Level   @relation(fields: [levelId], references: [id])
+  levelId                     String  @db.ObjectId
+  student                     Student @relation(fields: [studentId], references: [id])
+  studentId                   String  @db.ObjectId
+  course                      Course  @relation(fields: [courseId], references: [id])
+  courseId                    String  @db.ObjectId
+  isCompleted                 Boolean
+  quizCompletedCount          Int
+  codeChallengeCompletedCount Int
+  lessonCompletedCount        Int
 }
 
 model LevelProgress {
-  id             String  @id @default(auto()) @map("_id") @db.ObjectId
-  student        Student @relation(fields: [studentId], references: [id])
-  studentId      String  @db.ObjectId
-  score          Int
-  completedLevel Boolean
+  id                  String  @id @default(auto()) @map("_id") @db.ObjectId
+  student             Student @relation(fields: [studentId], references: [id])
+  studentId           String  @db.ObjectId
+  levelId             String  @db.ObjectId
+  level               Level   @relation(fields: [levelId], references: [id])
+  currentQuizNumber   Int
+  currentLessonNumber Int
+  completedLevel      Boolean
 }
 
+// streaks format
+// once we encounter 
+// history: 
+// 1 - completed a lesson
+// 0 - failed to complete a lesson
+// 2 - used streak freeze
 model Streaks {
-  id        String    @id @default(auto()) @map("_id") @db.ObjectId
-  startDate DateTime
-  endDate   DateTime?
-  isActive  Boolean
-  student   Student   @relation(fields: [studentId], references: [id])
-  studentId String    @db.ObjectId
+  id           String   @id @default(auto()) @map("_id") @db.ObjectId
+  currentDate  DateTime
+  currentCount Int
+  history      Int[]
+  student      Student  @relation(fields: [studentId], references: [id])
+  studentId    String   @unique @db.ObjectId
 }
 
 model Solution {
   id              String        @id @default(auto()) @map("_id") @db.ObjectId
   answer          String
+  course          Course        @relation(fields: [courseId], references: [id])
+  courseId        String        @db.ObjectId
   codeChallenge   CodeChallenge @relation(fields: [codeChallengeId], references: [id])
   codeChallengeId String        @db.ObjectId
   owner           Student       @relation(fields: [studentId], references: [id])
-  studentId       String        @db.ObjectId
+  studentId       String        @unique @db.ObjectId
 }

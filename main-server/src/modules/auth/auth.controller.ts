@@ -12,9 +12,9 @@ import { isSamePassword } from "../../utils/isSamePassword";
 import { generateHash } from "../../utils/generateHash";
 import * as z from "zod";
 interface UserData extends UserSchema{
-
+  is_email_verified?: boolean
 }
-const createUser = async ({dob,email,name,profile_photo, password}:UserData) => {
+const createUser = async ({dob,email,name,profile_photo, password, is_email_verified=false}:UserData) => {
   const salt = await bcrypt.genSalt(10);
   const hashedPassword = await bcrypt.hash(password, salt);
   const createdUser = await prisma.user.create({
@@ -24,7 +24,7 @@ const createUser = async ({dob,email,name,profile_photo, password}:UserData) => 
       name,
       password: hashedPassword,
       profile_photo: profile_photo ?? "",
-      is_email_verified: false,
+      is_email_verified,
     },
   });
   return createdUser;
@@ -114,7 +114,8 @@ const registerTeacher = async (req: Request, res: Response, next: NextFunction) 
       dob,
       email,
       profile_photo,
-      password
+      password,
+      is_email_verified: true
     });
     //@TODO: perform some verification on the teachers uploaded certificate
     const teacher = await prisma.teacher.create({
@@ -126,10 +127,11 @@ const registerTeacher = async (req: Request, res: Response, next: NextFunction) 
     });
     teacherData.userId = createdUser.id;
     delete teacherData.password;
-    const otp = await getOtp(createdUser.id);
-    await sendVerificationEmail(createdUser.email, createdUser.name, otp);
+    // not sending email verification to teachers (will be added later no time)
+    /* const otp = await getOtp(createdUser.id);
+    await sendVerificationEmail(createdUser.email, createdUser.name, otp); */
     const token = createToken({
-      is_email_verified: false,
+      is_email_verified: true,
       isTeacher: true,
       userId: teacherData.userId as string,
       profileId: teacher.id
