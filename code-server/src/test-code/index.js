@@ -43,6 +43,8 @@ async function testCode({
     });
     console.log(response)
    test.passed = response?.output?.trim() === test.expectedOutput.trim();
+   test.output = output;
+   delete test.input;
     if (!test.passed) {
       test.outputReceived = response?.output || response?.error;
     }
