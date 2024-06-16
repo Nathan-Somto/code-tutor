@@ -1,4 +1,5 @@
 import {prisma} from "../config/db"
+import { BadRequestError } from "../errors/httpErrors";
 import { getDayDifference } from "../utils/getDayDifference";
 export const updateStreaks = async (studentId: string) => {
   const today = new Date();
@@ -32,11 +33,10 @@ export const updateStreaks = async (studentId: string) => {
       updatedCount = 1;
     }
 
-    // Ensure history length does not exceed 7 days
-    if (updatedHistory.length > 7) {
-      updatedHistory = updatedHistory.slice(updatedHistory.length - 7);
-    }
-
+    
+   
+    
+    
    const updatedStreaks = await prisma.streaks.update({
       where: { id: streak.id },
       data: {
@@ -48,7 +48,8 @@ export const updateStreaks = async (studentId: string) => {
     streaks = {
         currentCount: updatedStreaks.currentCount,
         currentDate: updatedStreaks.currentDate,
-        history: updatedStreaks.history
+        currentStatus: 1,
+        history: updatedStreaks.history.slice(-7)
     }
     return streaks;
   } 
@@ -58,13 +59,66 @@ export const updateStreaks = async (studentId: string) => {
         studentId,
         currentDate: today,
         currentCount: 1,
+        currentStatus: 1,
         history: [1],
       },
     });
   streaks = {
     currentCount: 1,
     currentDate: today,
+    currentStatus: 1,
     history: [1]
   };
   return streaks;
 };
+export const getStreaksData = async (studentId: string) => {
+  const streak = await prisma.streaks.findFirst({
+    where: {
+      studentId
+    }
+  });
+  if(!streak) {
+    return {
+      history: [],
+      currentStatus: 0,
+      currentDate: new Date(),
+      currentCount: 0
+    }
+  }
+  const today = new Date();
+  const currentDate = streak.createdDate;
+  const diff = getDayDifference(currentDate, today)
+  // if current date is today send back the  current data.
+  if( diff === 0){
+    return {
+      history: streak.history.slice(-7),
+      currentStatus: streak.currentStatus,
+      currentDate,
+      currentCount: streak.currentCount
+    }
+  }
+  else {
+    // update all the missed days to 0
+    const updatedHistory = [...streak.history];
+    for (let i = 0; i < diff; i++){
+      updatedHistory.push(0)
+    };
+    await prisma.streaks.update({
+      where: {
+        id: streak.id
+      },
+      data : {
+        currentCount: 0,
+        currentDate: today,
+        history: updatedHistory,
+        currentStatus: 0
+      }
+    });
+    return {
+      currentCount: 0,
+      currentDate: today,
+      history: updatedHistory.slice(-7),
+      currentStatus: 0
+    }
+  }
+}

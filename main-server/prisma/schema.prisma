@@ -29,24 +29,28 @@ model User {
 }
 
 model Student {
-  id                String           @id @default(auto()) @map("_id") @db.ObjectId
-  user              User             @relation(fields: [userId], references: [id])
-  userId            String           @unique @db.ObjectId
-  username          String           @unique
-  programme         String
-  rank              Difficulty       @default(Easy)
-  xpPoints          Int              @default(0)
-  enrolledCourses   Course[]         @relation(fields: [enrolledCoursesId], references: [id])
-  enrolledCoursesId String[]         @db.ObjectId
-  unlockedBadges    Badge[]          @relation(fields: [badgeId], references: [id])
-  badgeId           String[]         @db.ObjectId
-  badgeProgress     BadgeProgress[]
-  rankProgress      RankProgress     @relation(fields: [rankProgressId], references: [id])
-  rankProgressId    String           @db.ObjectId
-  courseProgress    CourseProgress[]
-  streaks           Streaks?
-  levelProgress     LevelProgress[]
-  solutions         Solution[]
+  id                          String           @id @default(auto()) @map("_id") @db.ObjectId
+  user                        User             @relation(fields: [userId], references: [id])
+  userId                      String           @unique @db.ObjectId
+  username                    String           @unique
+  programme                   String
+  gems                        Int              @default(50)
+  rank                        Difficulty       @default(Easy)
+  xpPoints                    Int              @default(0)
+  quizCompletedCount          Int              @default(0)
+  codeChallengeCompletedCount Int              @default(0)
+  lessonCompletedCount        Int              @default(0)
+  enrolledCourses             Course[]         @relation(fields: [enrolledCoursesId], references: [id])
+  enrolledCoursesId           String[]         @db.ObjectId
+  unlockedBadges              Badge[]          @relation(fields: [badgeId], references: [id])
+  badgeId                     String[]         @db.ObjectId
+  badgeProgress               BadgeProgress[]
+  rankProgress                RankProgress     @relation(fields: [rankProgressId], references: [id])
+  rankProgressId              String           @db.ObjectId
+  courseProgress              CourseProgress[]
+  streaks                     Streaks?
+  levelProgress               LevelProgress[]
+  solutions                   Solution[]
 }
 
 model Teacher {
@@ -109,6 +113,7 @@ model Level {
   id             String           @id @default(auto()) @map("_id") @db.ObjectId
   topic          Topic            @relation(fields: [topicId], references: [id])
   topicId        String           @db.ObjectId
+  gems           Int
   xp             Int
   mysteryLevel   Boolean
   order          Int
@@ -227,7 +232,16 @@ model Badge {
   description       String
   studentsWithBadge Student[]       @relation(fields: [studentId], references: [id])
   studentId         String[]        @db.ObjectId
+  achievementCount  Int             @default(10)
   studentProgress   BadgeProgress[]
+  badgeType         BadgeType       @default(Xp)
+}
+
+enum BadgeType {
+  Quiz
+  Code
+  Learner
+  Xp
 }
 
 model BadgeProgress {
@@ -242,19 +256,16 @@ model BadgeProgress {
 }
 
 model CourseProgress {
-  id                          String  @id @default(auto()) @map("_id") @db.ObjectId
-  currentTopic                Topic   @relation(fields: [topicId], references: [id])
-  topicId                     String  @db.ObjectId
-  currentLevel                Level   @relation(fields: [levelId], references: [id])
-  levelId                     String  @db.ObjectId
-  student                     Student @relation(fields: [studentId], references: [id])
-  studentId                   String  @db.ObjectId
-  course                      Course  @relation(fields: [courseId], references: [id])
-  courseId                    String  @db.ObjectId
-  isCompleted                 Boolean
-  quizCompletedCount          Int
-  codeChallengeCompletedCount Int
-  lessonCompletedCount        Int
+  id           String  @id @default(auto()) @map("_id") @db.ObjectId
+  currentTopic Topic   @relation(fields: [topicId], references: [id])
+  topicId      String  @db.ObjectId
+  currentLevel Level   @relation(fields: [levelId], references: [id])
+  levelId      String  @db.ObjectId
+  student      Student @relation(fields: [studentId], references: [id])
+  studentId    String  @db.ObjectId
+  course       Course  @relation(fields: [courseId], references: [id])
+  courseId     String  @db.ObjectId
+  isCompleted  Boolean
 }
 
 model LevelProgress {
@@ -275,12 +286,14 @@ model LevelProgress {
 // 0 - failed to complete a lesson
 // 2 - used streak freeze
 model Streaks {
-  id           String   @id @default(auto()) @map("_id") @db.ObjectId
-  currentDate  DateTime
-  currentCount Int
-  history      Int[]
-  student      Student  @relation(fields: [studentId], references: [id])
-  studentId    String   @unique @db.ObjectId
+  id            String   @id @default(auto()) @map("_id") @db.ObjectId
+  currentDate   DateTime
+  createdDate   DateTime @default(now())
+  currentCount  Int
+  currentStatus Int
+  history       Int[]
+  student       Student  @relation(fields: [studentId], references: [id])
+  studentId     String   @unique @db.ObjectId
 }
 
 model Solution {

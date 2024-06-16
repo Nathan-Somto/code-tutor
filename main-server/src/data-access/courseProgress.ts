@@ -123,12 +123,42 @@ export const updateCourseProgress = async (
       data: {
         levelId: values?.nextLevelId ?? levelId,
         topicId: values?.nextTopicId ?? courseProgress.topicId,
-        isCompleted: values === null,
-        ...countUpdate,
+        isCompleted: values === null
       },
     });
+   const student = await prisma.student.update({
+      where: {
+        id: studentId
+      },
+      data : {
+        ...countUpdate,
+      }
+    })
+    if (values?.nextLevelId) {
+   const levelProgress =   await prisma.levelProgress.create({
+        data: {
+          studentId,
+          levelId: values.nextLevelId,
+         completedLevel: false,
+         currentLessonNumber: 0,
+         currentQuizNumber: 0,
+        },
+      });
+      await prisma.student.update({
+        where : {
+          id:studentId
+        },
+        data : {
+          levelProgress : {
+            connect: {
+              id: levelProgress.id
+            }
+          }
+        }
+      })
+    }
     return {
-      count: currentProgress[typeString],
+      count: student[typeString],
       typeString,
       nextLevelId: values?.nextLevelId,
       nextTopicId: values?.nextTopicId,
