@@ -360,9 +360,6 @@ const enrollInCourse = async (
 
     const courseProgress = await prisma.courseProgress.create({
       data: {
-        codeChallengeCompletedCount: 0,
-        lessonCompletedCount: 0,
-        quizCompletedCount: 0,
         courseId,
         topicId: firstLevelId,
         levelId: firstTopicId,
@@ -460,7 +457,7 @@ const getCourses = async (req: Request, res: Response, next: NextFunction) => {
       const topics = course.Topic.map((topic) => topic.id);
       const currentTopic = progressMap.get(course.id);
       const topicIndex =
-        currentTopic !== undefined ? topics.findIndex(currentTopic) ?? 0 : 0;
+        currentTopic !== undefined ? (topics.findIndex((value) => value === currentTopic) ?? 0) : 0;
       const progress = isEnrolled
         ? Math.floor(topicIndex / topics.length) * 100
         : undefined;
@@ -531,10 +528,10 @@ const getBadgeProgress = async (
       const count =
         badgeType === "Quiz"
           ? student.quizCompletedCount
-          : badgeType === "Lesson"
+          : badgeType === "Learner"
           ? student.lessonCompletedCount
           : badgeType === "Code"
-          ? student.codeCompletedCount
+          ? student.codeChallengeCompletedCount
           : student.xpPoints;
       const progress = badge.achieved
         ? undefined
@@ -735,13 +732,146 @@ const saveCodeSolution = async (
 };
 const getLeaderboard = async (req:Request, res: Response, next: NextFunction) => {
   try {
-    const {pageSize=10, page =1 } = req.query;
+    const { pageSize = '10', page = '1' } = req.query;
+
+    // Convert query parameters to integers
+    let size = parseInt(pageSize as string, 10);
+    let currentPage = parseInt(page as string, 10);
+
+    if (isNaN(size) || isNaN(currentPage)) {
+      throw new BadRequestError("Invalid page or pageSize query parameter");
+    } else {
+      size = Math.abs(size);
+      currentPage = Math.abs(currentPage);
+    }
+
+    // Calculate the offset for pagination
+    const offset = (currentPage - 1) * size;
+
+    // Get the total count of students for pagination
+    const totalStudents = await prisma.student.count();
+    const totalPages = Math.ceil(totalStudents / size)
    // get the page size equivalent of students ordered by increasing xp points
+  const leaderboard =  await prisma.student.findMany({
+    orderBy: {
+      xpPoints : 'desc'
+    },
+    take: size,
+    skip: offset,
+    select: {
+      username: true,
+      id: true,
+      xpPoints: true,
+      rank: true,
+      user: {
+        select : {
+          name: true,
+          profile_photo: true
+        }
+      }
+    }
+   });
+    const leaderboardWithPosition =  leaderboard.map((student, index) =>{
+      const position = (index + 1 ) + offset; 
+      return {
+        ...student,
+        position
+      }
+    });
+    const response = {
+      totalStudents,
+      pageSize: size,
+      currentPage,
+      leaderboard: leaderboardWithPosition
+    }
+    ResponseHandler.send(res, 200, response, 'successfully retireved leaderboard data')
   }
   catch(err){
     next(err)
   }
 }
+const getLeaderboardPosition = async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    const { username } = req.params;
+
+    // Fetch the student's XP points and other details by their username
+    const student = await prisma.student.findUnique({
+      where: { username },
+      select: {
+        xpPoints: true,
+        username: true,
+        id: true,
+      },
+    });
+
+    if (!student) {
+      throw new NotFoundError("Student not found!");
+    }
+
+    // Count the number of students with higher XP points than the given student
+    const higherRankedStudentsCount = await prisma.student.count({
+      where: {
+        xpPoints: {
+          gt: student.xpPoints,
+        },
+      },
+    });
+
+    // Calculate the student's position
+    const position = higherRankedStudentsCount + 1;
+
+
+    // Determine the start position as a multiple of the page size
+    const pageSize = 10;
+    const startPosition = Math.floor((position - 1) / pageSize) * pageSize + 1;
+    const endPosition = startPosition + pageSize - 1;
+
+    // Fetch the students using the determined range
+    const surroundingStudents = await prisma.student.findMany({
+      orderBy: {
+        xpPoints: 'desc',
+      },
+      skip: startPosition - 1, // Skip the students before the start position
+      take: endPosition,
+      select: {
+        username: true,
+        id: true,
+        xpPoints: true,
+        rank: true,
+        user: {
+          select: {
+            name: true,
+            profile_photo: true,
+          },
+        },
+      },
+    });
+    const totalStudents = await prisma.student.count();
+    const totalPages = Math.ceil(totalStudents / pageSize);
+    const currentPage = Math.floor(endPosition / pageSize);
+    // Map the surrounding students to include their positions
+    const leaderboardWithPosition = surroundingStudents.map((student, index) => {
+      const studentPosition = startPosition + index;
+      return {
+        ...student,
+        position: studentPosition,
+        isUser: student.username === username,
+      };
+    });
+    const response = {
+      leaderboard: leaderboardWithPosition,
+      totalPages,
+      pageSize,
+      currentPage
+    }
+    ResponseHandler.send(res, 200, response, 'Successfully retrieved student leaderboard position');
+  } catch (err) {
+    next(err);
+  }
+};
+
+
+
 const getProfile = async (req:Request, res: Response, next: NextFunction) => {
   try {
     const {studentId} = req.params;
@@ -787,6 +917,7 @@ const getProfile = async (req:Request, res: Response, next: NextFunction) => {
     next(err);
   }
 }
+
 export {
   completeLevel,
   freezeStreaks,
@@ -799,5 +930,6 @@ export {
   saveCodeSolution,
   getLeaderboard,
   getLevelProgress,
-  getProfile
+  getProfile,
+  getLeaderboardPosition
 };

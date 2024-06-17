@@ -4,8 +4,10 @@ import cors from "cors";
 import { NotFoundError } from "./errors/httpErrors";
 import { errorHandler } from "./middleware/error.middleware";
 import authRouter from "./modules/auth"
+import studentRouter from "./modules/student"
+import courseRouter from "./modules/course"
 import { createRouteHandler } from "uploadthing/express";
-import { uploadRouter } from "./middleware/uploadthing.middleware";
+import { uploadRouter } from "./services/uploadthing";
 const app = express();
 app.use(morgan('dev'));
 app.use(express.json());
@@ -13,6 +15,8 @@ app.use(express.urlencoded({extended: true}));
 app.use(cors());
 
 app.use('/api/auth', authRouter);
+app.use('/api/students', studentRouter);
+app.use('/api/courses', courseRouter);
 app.use('/api/uploadthing', createRouteHandler({
   router: uploadRouter,
   config: {

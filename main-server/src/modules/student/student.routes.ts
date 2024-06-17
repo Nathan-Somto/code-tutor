@@ -11,6 +11,7 @@ import {
   saveCodeSolution,
   getLevelProgress,
   getLeaderboard,
+  getLeaderboardPosition,
   getProfile,
 } from "./student.controller";
 import auth from "../auth";
@@ -39,6 +40,6 @@ router.post("/:studentId/save-code", saveCodeSolution);
 /* .patch("/:studentId/save-code"); */
 // LeaderBoard Specific i.e leaderboard page in student ui.
 router.get("/leaderboard", getLeaderboard);
-//router.get("/:studentId/leaderboard-position");
+router.get("/leaderboard-position", getLeaderboardPosition);
 
 export default router;
