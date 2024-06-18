@@ -16,7 +16,7 @@ const password = ref('');
 // create login function here
 const login = () => {
   console.log('login');
-  $router.push('/home');
+  $router.push('/dashboard');
 };
 </script>
 <template>
