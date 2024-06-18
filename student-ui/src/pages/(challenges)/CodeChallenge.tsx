@@ -29,16 +29,26 @@ import { Button } from "@/components/ui/button";
 import { useKeyboardShortCut } from "@/hooks/useKeyboardShortCut";
 import { TerminalProps } from "@/components/IDE/types";
 import { Spinner } from "@/components/ui/spinner";
+import challengeData from "@/data/sample-curriculum/codechallenge.json";
+import { useNavigate } from "react-router-dom";
+type TestCase = {
+    input: null  |  string;
+    description: string;
+    expectedOutput: string;
+    passed: null;
+}[]; 
+
 function CodeChallenge() {
   // when should i store the user's solution?
   // test the user's code
   // check if the user passed
   // show submit button if they passed (show run tests otherwise)
   // when they submit, store
-  const { levelId } = useParams();
-  const [testCases, setTestCases] = React.useState<TerminalProps["testCases"]>(
+  const { levelId, courseId } = useParams();
+  const [testCases, setTestCases] = React.useState<TestCase>(
     []
   );
+  const [testResults, setTestResults] = React.useState<TerminalProps["testCases"]>([])
   const [output, setOutput] = React.useState("");
   const [codeContent, setCodeContent] = React.useState("");
   const [processingCode, setProcessingCode] = React.useState(false);
@@ -46,8 +56,10 @@ function CodeChallenge() {
   const [markdownData, setMarkdownData] = React.useState<string>("");
   const [maximize, setMaximize] = React.useState<boolean>(false);
   const [fetching, setFetching] = React.useState<boolean>(false);
+  const [functionCall, setFunctionCall] = React.useState<string  |  null>(null)
   const baseCode = React.useRef<string>("");
   const Langauge = "Python";
+  const navigate = useNavigate();
   function handleChange(value: string | undefined, _event: unknown) {
     setCodeContent(value ?? "");
   }
@@ -72,6 +84,22 @@ function CodeChallenge() {
     setSubmitting(true);
     try {
       // send code to test code endpoint
+      const response = await axios.post('http://localhost:8080/test-code', {
+        code: codeContent,
+        language: "py",
+        tests: testCases,
+        functionCall
+      })
+      console.log(response.data);
+      if(response.data.body && Array.isArray(response.data.body)){
+        if(response.data.body.every((item: any) => item.passed)){
+          navigate(`/challenge/${courseId}/level/${levelId}/result?type=code`);
+          return;
+        }
+        else {
+          setTestResults(response.data.body as TerminalProps['testCases'])
+        }
+      }
       //
     } catch (err) {
     } finally {
@@ -92,16 +120,16 @@ function CodeChallenge() {
       setFetching(true);
       try {
         //@Todo: change hard-code to actual fetching of  files from level endpoint.
-        const folderName = levelId === "1234567" ? "sorting-test" : "print-test"
-        const starterCode = await axios.get(
-          `http://localhost:8080/code-challenge/${folderName}/starter-code`
-        );
-        baseCode.current = starterCode.data;
-        setCodeContent(starterCode.data);
-        const markdown = await axios.get(
-          `http://localhost:8080/code-challenge/${folderName}/challenge`
-        );
-        setMarkdownData(markdown.data as string);
+        const challenge = challengeData.find(item => item.id === levelId);
+        if(!challenge) {
+          navigate(-1);
+          return;
+        }
+        baseCode.current = challenge.starterCode;
+        setCodeContent(challenge.starterCode);
+        setMarkdownData(challenge.starterFile);
+        setTestCases(challenge.tests);
+        setFunctionCall(challenge.functionCall)
       } catch (err) {
         console.log((err as Error).message);
       } finally {
@@ -184,7 +212,7 @@ function CodeChallenge() {
                       disabled={processingCode || submitting}
                     >
                       {processingCode ? (
-                        <Spinner size='sm'/>
+                        <Spinner size="sm" />
                       ) : (
                         <>
                           <Play size={16} className="mr-1.5" /> Run
@@ -276,8 +304,8 @@ function CodeChallenge() {
               output,
               maximized: maximize,
               handleOutputReset,
-              currentValue: `${testCases.length ? "testCases" : "output"}`,
-              testCases,
+              currentValue: `${testResults.length ? "testCases" : "output"}`,
+              testCases: testResults,
             }}
           />
         </div>
