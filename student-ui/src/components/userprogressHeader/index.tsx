@@ -16,11 +16,11 @@ import {
   DropdownMenuContent,
 } from "../ui/dropdown-menu";
 import Fire from "@/assets/fire.svg";
-import HintsButton from "../hintsButton";
+import Diamond from "@/assets/diamond.svg";
 import { ShieldCheckIcon } from "lucide-react"
 export default function UserProgressHeader() {
     const {
-        data: { currentCourse: id, totalXp, streakData, hints },
+        data: { currentCourse: id, totalXp, streakData, gems },
       } = useRoot() as NonNullable<ReturnType<typeof useRoot>>;
       const currentCourse = sampleData.find((item) => item.id === +id);
       async function handleStreakFreeze() {
@@ -100,12 +100,26 @@ export default function UserProgressHeader() {
             </TooltipContent>
           </Tooltip>
         </TooltipProvider>
-        {/* Hints Number */}
-        <HintsButton
-          hintsLeft={hints.totalHints}
-          hintsRefreshDate={hints.refreshDate}
-          className="flex-row-reverse text-base"
-        />
+        <TooltipProvider>
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <Button
+                variant="transparent"
+                className="px-2 text-sky-300 gap-x-1.5"
+              >
+                <img
+                  src={Diamond}
+                  alt="xp icon"
+                  className="h-5 w-5 object-contain"
+                />
+                <span className="">{gems}</span>
+              </Button>
+            </TooltipTrigger>
+            <TooltipContent>
+              <p> Gems </p>
+            </TooltipContent>
+          </Tooltip>
+        </TooltipProvider>
       </header>
     )
 }

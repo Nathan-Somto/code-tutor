@@ -1,0 +1,46 @@
+[
+    {
+        "achieved": true,
+        "Badge": {
+            "description": "complete at least 10 quizzes",
+            "name": "Quiz Master",
+            "image": "Quiz",
+            "achievementCount": 10,
+            "badgeType": "quiz"
+        },
+        "progress": 100
+    },
+    {
+        "achieved": false,
+        "Badge": {
+            "description": "complete at least 10 code challenges",
+            "name": "Code Ninja",
+            "image": "Code",
+            "achievementCount": 10,
+            "badgeType": "code"
+        },
+        "progress": 40
+    },
+    {
+        "achieved": false,
+        "Badge": {
+            "description": "complete at least 10 lessons",
+            "name": "Active Learner",
+            "image": "Learner",
+            "achievementCount": 10,
+            "badgeType": "learner"
+        },
+        "progress": 10
+    },
+    {
+        "achieved": true,
+        "Badge": {
+            "description": "gain at least 500xp",
+            "name": "Xp Champ",
+            "image": "Xp",
+            "achievementCount": 500,
+            "badgeType": "xp"
+        },
+        "progress": 100
+    }
+]

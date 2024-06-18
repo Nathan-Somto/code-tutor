@@ -66,6 +66,14 @@
       --ring: 110 100% 50%; /* Adjusted color for focus rings in dark mode */
     }
   }
+  @layer utilities {
+    .shield-border-radius {
+      border-radius: 50% 50% 50% 50% / 12% 12% 88% 88%;
+    }
+    .logo-text {
+      @apply bg-clip-text text-transparent bg-gradient-to-r from-green-400 via-indigo-500 to-purple-500;
+    }
+  }
 @layer base {
   * {
     @apply border-border;
@@ -95,4 +103,34 @@
 }
 .blink{
   animation: blink .8s infinite;
+}
+/* Text coming up animation */
+@keyframes comeUp {
+  0% {
+    transform: translateY(10px);
+    opacity: 0.5;
+  }
+  100% {
+    transform: translateY(0px);
+    opcaity: 1;
+  }
+}
+/* class for it not infinite ease  */
+.come-up {
+  animation: comeUp 0.5s ease;
+}
+/* object reveal animation */
+@keyframes objectReveal {
+    0%{
+        scale: 0;
+        opacity: 0;
+    }
+    100%{
+        scale: 1;
+        opacity: 1;
+    }
+}
+/* class for object reveal with delay of 0.25s */
+.object-reveal {
+    animation: objectReveal 0.55s ease 0.3s backwards;
 }

@@ -13,6 +13,7 @@ export type RootProviderProps = {
         refreshDate: null | Date;
     };
     totalXp: number;
+    gems: number;
 }
 export type RootProps = {
     data: RootProviderProps,
@@ -34,7 +35,8 @@ export default function RootProvider({children}:{ children: React.ReactNode }){
             totalHints: 5,
             refreshDate: null
         },
-        totalXp: 0
+        totalXp: 0,
+        gems: 50
     });
     //const {userId} = useAuth();
     // get the current logged in user's id from the useAuth hook fetch the user's data from the server and set it to the data state
@@ -52,7 +54,8 @@ export default function RootProvider({children}:{ children: React.ReactNode }){
                 totalHints: 5,
                 refreshDate: null
             },
-            totalXp: 350
+            totalXp: 350,
+            gems: 100
         })
     },[])
     return (

@@ -1,0 +1,78 @@
+[
+    {
+        "id": "level_8",
+        "language": "py",
+        "description": "a simple test for counting vowels in a string",
+        "functionCall": null,
+        "tests": [
+            {
+                "input": null,
+                "description": "must count the number of vowels in 'hello world'",
+                "expectedOutput": "3",
+                "passed": null
+            }
+        ],
+        "starterFile": "### Counting Vowels Challenge\n\nImagine you are tasked with creating a function that can assist a child learning to count vowels in words. Your function `count_vowels` should skillfully count the vowels in a given string, helping the child learn basic phonetics.\n\nYour task is to implement the `count_vowels` function, which takes a string as input and returns the number of vowels it contains.",
+        "starterCode": "#type your code here\ndef count_vowels(s):\n    pass"
+    },
+    {
+        "id": "level_6",
+        "language": "py",
+        "description": "a simple test for reversing a string",
+        "functionCall": null,
+        "tests": [
+            {
+                "input": null,
+                "description": "must reverse the string 'hello'",
+                "expectedOutput": "olleh",
+                "passed": null
+            }
+        ],
+        "starterFile": "### Reversing String Challenge\n\nPicture yourself as a detective decoding a secret message. You need to reverse a sequence of characters to uncover the hidden meaning. Your task is to implement the `reverse_string` function to decrypt the message.\n\nImplement the `reverse_string` function, which takes a string as input and returns the reversed version of it.",
+        "starterCode": "#type your code here\ndef reverse_string(s):\n    pass"
+    },
+    {
+        "id": "level_2",
+        "language": "py",
+        "description": "a simple test for summing the squares of array elements",
+        "functionCall": "sum_of_squares",
+        "tests": [
+            {
+                "input": "[1, 2, 3, 4, 5]",
+                "description": "must return the sum of squares",
+                "expectedOutput": "55",
+                "passed": null
+            },
+            {
+                "input": "[-1, -2, -3, -4, -5]",
+                "description": "must return the sum of squares",
+                "expectedOutput": "55",
+                "passed": null
+            }
+        ],
+        "starterFile": "## Sum of Squares Challenge\n\nImagine you are an architect designing a grand fountain. You need to calculate the total area of each water jet's reach to ensure a perfectly synchronized water display.\n\n Your task is to implement the `sum_of_squares` function, which calculates the sum of squares of elements in an array, crucial for determining the water jet areas.\n\nImplement the `sum_of_squares` function, which takes an array of integers as input and returns the sum of squares of its elements.",
+        "starterCode": "#type your code here\ndef sum_of_squares(arr):\n    pass"
+    },
+    {
+        "id": "level_4",
+        "language": "py",
+        "description": "a simple test for sorting",
+        "functionCall": "sort_my_basket",
+        "tests": [
+            {
+                "input": "[]",
+                "description": "must be an empty array",
+                "expectedOutput": "[]",
+                "passed": null
+            },
+            {
+                "input": "[4,2,5,1,9,3]",
+                "description": "must be a sorted array",
+                "expectedOutput": "[1, 2, 3, 4, 5, 9]",
+                "passed": null
+            }
+        ],
+        "starterFile": "### Sorting Challenge\n\nImagine you are a librarian tasked with organizing a chaotic shelf of books. You need to sort them in alphabetical order by title to create a pleasing arrangement for readers. Your task is to implement the `sort_my_basket` function to alphabetize the book titles.\n\nImplement the `sort_my_basket` function, which takes an array of numbers as input and sorts them in ascending order.",
+        "starterCode": "#type your code here\ndef sort_my_basket(basket):\n    pass"
+    }
+]

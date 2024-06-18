@@ -21,7 +21,7 @@ export default function SidebarItem({
       to={href}
       className={cn(
         "flex px-5 gap-3 tracking-wide items-center hover:bg-slate-900 h-[52px] rounded-md py-3",
-        href === pathname &&
+        (href === pathname || href.includes(pathname)) &&
           "text-secondary border border-secondary font-medium"
       )}
     >
