@@ -7,11 +7,14 @@ import {
   StarIcon,
 } from "lucide-react";
 import StartPopup from "./StartPopup";
+import React from "react";
 import { Button } from "../ui/button";
 import { useNavigate } from "react-router-dom";
 import { cn } from "@/utils";
 import { CircularProgressbarWithChildren } from "react-circular-progressbar";
 import "react-circular-progressbar/dist/styles.css";
+import { DropdownMenu, DropdownMenuContent, DropdownMenuTrigger } from "../ui/dropdown-menu";
+import { Rank } from "../rank";
 
 type LevelType = "lesson" | "quiz" | "code";
 export type LevelButtonProps = {
@@ -24,6 +27,8 @@ export type LevelButtonProps = {
   mysteryLevel: boolean;
   isLast: boolean;
   isCompleted: boolean;
+  xp: number;
+  rank?: keyof typeof Rank;
 };
 
 function LevelButton({
@@ -36,10 +41,19 @@ function LevelButton({
   link,
   index,
   progress,
+  xp,
+  rank
 }: LevelButtonProps) {
+  const [menu, setMenu] = React.useState(false);
   const cycleLength = 8;
   const cycleIndex = index % cycleLength;
-
+  const rankStyles = {
+    "Easy": 'text-green-500 ', // gold color for expert
+    "Medium": 'text-blue-500 ',
+    "Hard": 'text-orange-500 ',
+    "Advanced": 'text-slate-500 ',
+    "Expert": 'text-[gold] ',
+  };
   let indentationLevel;
 
   if (cycleIndex <= 2) indentationLevel = cycleIndex;
@@ -72,6 +86,7 @@ function LevelButton({
     >
       <>
         {isCurrent && <StartPopup />}
+        <DropdownMenu open={menu} onOpenChange={(prev) => setMenu(prev)} >     
         {isUnlocked ? (
         <CircularProgressbarWithChildren
           value={progress ?? 0}
@@ -84,6 +99,7 @@ function LevelButton({
             },
           }}
         >
+          <DropdownMenuTrigger asChild>
           <Button
             variant={"primary"}
             size="rounded"
@@ -92,12 +108,13 @@ function LevelButton({
             className={cn(
               "mx-auto text-slate-200 flex-shrink-0  relative h-[70px]  w-[70px] border-b-8 bg-primary/90",
             )}
-            onClick={() => navigate(link)}
           >
             <Icon />
           </Button>
+          </DropdownMenuTrigger>
         </CircularProgressbarWithChildren>
         ) : (
+          <DropdownMenuTrigger asChild>
           <Button
           variant={"primary"}
           size="rounded"
@@ -107,7 +124,23 @@ function LevelButton({
           >
             <Icon/>
           </Button>
+        </DropdownMenuTrigger>
         )}
+        <DropdownMenuContent className=" min-h-28 py-3 px-2 min-w-44 z-[9999999999999999]">
+          <h3 className="text-lg mb-1.5 font-semibold capitalize ">{levelType} Level</h3>
+         {rank && ( 
+          <div className="flex items-center gap-x-1">
+            <p>Difficulty: </p>
+            <p className={`${rankStyles[rank]}  font-medium`}>{rank}</p>
+          </div>
+         )
+         }
+          <Button variant="primary" onClick={() => {navigate(link); setMenu(false);}} className="w-full mt-3">
+          <span>Start</span>
+          <span className="text-slate-950">(+{xp}XP)</span>
+          </Button>
+        </DropdownMenuContent>
+      </DropdownMenu>
       </>
     </div>
   );

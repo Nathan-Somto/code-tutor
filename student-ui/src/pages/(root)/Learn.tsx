@@ -27,6 +27,8 @@ for (let i = 1; i <= 12; i++) {
     isLast: i % 4 === 0,
     isCompleted: i < currentLevelIndex,
     progress: i === currentLevelIndex ? 50 : i <= currentLevelIndex ? 100 : 0,
+    rank: i % 3 === 0 ? "Easy" : i % 2 === 0 ? "Advanced" : "Hard",
+    xp: (i * 12 ) + 2
   });
 };
 
