@@ -4,31 +4,43 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { ChevronLeft, ChevronRight } from "lucide-react";
+import RankComponent from "@/components/rank"
 const leaderboardData = {
   data: [
     {
       username: "davy jones",
-      avatar: "https://example.com/1",
+      avatar: "https://randomuser.me/api/portraits/men/9.jpg",
       xp: 3450,
+      rank: "Expert",
       id: 1234,
     },
     {
       username: "jane doe",
-      avatar: "https://example.com/2",
+      avatar: "https://randomuser.me/api/portraits/women/2.jpg",
       xp: 3400,
       id: 5678,
+      rank: "Advanced"
     },
     {
       username: "mike1234",
-      avatar: "https://example.com/3",
+      avatar: "https://randomuser.me/api/portraits/men/6.jpg",
       xp: 3380,
       id: 1678,
+      rank:"Hard"
     },
     {
       username: "iam_kate21",
-      avatar: "https://example.com/4",
+      avatar: "https://randomuser.me/api/portraits/women/7.jpg",
       xp: 3360,
       id: 1278,
+      rank : "Medium"
+    },
+    {
+      username: "jon21b",
+      avatar: "https://randomuser.me/api/portraits/women/7.jpg",
+      xp: 330,
+      id: 1290,
+      rank : "Easy"
     },
   ],
   pages: 1,
@@ -51,13 +63,21 @@ export default function LeaderboardPage() {
       </header>
       <Separator />
       <div className="max-w-4xl mx-auto space-y-3 mt-6 px-4">
+        <div className="flex items-center justify-between px-4">
+          <div className="flex items-center gap-x-8 flex-[0.7]">
+          <div>S/N</div>
+          <div>Username</div>
+          </div>
+          <div className="max-w-16 w-16 ">Rank</div>
+          <div className="max-w-16 w-16 " >XP</div>
+        </div>
         {leaderboardData.data.map((item, index) => (
           <Link
             to={`/profile/${item.username}`}
             key={item.id}
             className="flex items-center rounded-xl justify-between px-4 py-2 hover:bg-slate-800"
           >
-            <div className="flex items-center">
+            <div className="flex items-center flex-[0.7]">
               <p className="font-semibold mr-4 text-sm">#{index + 1}</p>
               <Avatar className="border-2 size-12 bg-green-600">
                 <AvatarImage
@@ -70,7 +90,10 @@ export default function LeaderboardPage() {
               </Avatar>
               <p className="font-bold ml-3">{item.username}</p>
             </div>
-            <p className="opacity-80">{item.xp}Xp</p>
+            <div className="max-w-16 w-16 flex-shrink-0">
+              <RankComponent rank={item.rank} size={32}/>
+            </div>
+            <p className="opacity-80 max-w-16 w-16">{item.xp}Xp</p>
           </Link>
         ))}
       
