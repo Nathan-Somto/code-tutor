@@ -72,17 +72,17 @@ const getCurriculum = async (
     }
 
     // Get the topics with pagination and only the specified properties
-    const topics = await prisma.topic.findMany({
+    let topics = await prisma.topic.findMany({
       where: { courseId },
       skip: (page - 1) * pageSize,
       take: pageSize,
       select: {
         id: true,
-        xpPointsNeeded: true,
         name: true,
         description: true,
         Level: {
           select: {
+            name: true,
             id: true,
             xp: true,
             mysteryLevel: true,
@@ -92,11 +92,17 @@ const getCurriculum = async (
         },
       },
     });
-
+    // find the total xp of a course by summing the xp of all the levels
+    let updatedTopics = topics.map((topic) => (
+      {
+        ...topic,
+        totalXp: topic.Level.reduce((acc, level) => acc + level.xp, 0),
+      }
+    ) )
     // Return the data
     const data = {
       courseId,
-      topics,
+      topics: updatedTopics,
       topics_pagination: {
         currentPage: page,
         pageSize,
