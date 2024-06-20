@@ -1,12 +1,18 @@
 import express from "express";
-//import { createlevel } from "./level.controller";
+import { createCodeLevel, createQuizlevel, getLevel, createLessonLevel, getLevels, getCodeSubmissions, createLevel, getQuizzes } from "./level.controller";
+import { teacherMiddleware } from "../../middleware/teacher.middleware";
+import { auth } from "../../middleware/auth.middleware";
+
 const router = express.Router();
-// teacher ui
-router.get('/levels');
-router.post("/quiz");
-router.post("/lesson");
-router.post("/code-challenge");
 // student ui
-router.get('/:levelId');
-router.get('/:levelId/code-submissions');
+router.use(auth);
+router.get('/:levelId', getLevel);
+router.get('/:levelId/code-submissions', getCodeSubmissions);
+// teacher ui
+router.use(teacherMiddleware);
+router.post('/', createLevel).get('/', getLevels);
+router.post("/quiz", createQuizlevel);
+router.post("/lesson", createLessonLevel);
+router.post("/code-challenge", createCodeLevel);
+router.get("/quiz", getQuizzes);
 export default router;
