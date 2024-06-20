@@ -101,7 +101,6 @@ model Topic {
   id             String           @id @default(auto()) @map("_id") @db.ObjectId
   course         Course           @relation(fields: [courseId], references: [id])
   courseId       String           @db.ObjectId
-  xpPointsNeeded Int
   name           String
   description    String
   Level          Level[]
@@ -116,6 +115,7 @@ model Level {
   gems           Int
   xp             Int
   mysteryLevel   Boolean
+  name           String
   order          Int
   difficulty     Difficulty       @default(Easy)
   Lesson         Lesson?
