@@ -97,7 +97,7 @@ const registerTeacher = async (req: Request, res: Response, next: NextFunction) 
       name,
       email,
       profile_photo,
-      dob,
+      dob: new Date(dob),
       password,
       certificate
     }
@@ -139,7 +139,7 @@ const registerTeacher = async (req: Request, res: Response, next: NextFunction) 
     ResponseHandler.send(
       res,
       201,
-      { ...teacherData, token },
+      { ...teacherData, token, profileId: teacher.id },
       "successfully registered teacher"
     );
   } catch (err) {
@@ -184,7 +184,7 @@ const login = async (req: Request, res: Response, next: NextFunction) => {
     userId: foundUser.id,
     profileId
    });
-   ResponseHandler.send(res,200, {token, userId: foundUser.id, profileId}, 'successfully logged in user');
+   ResponseHandler.send(res,200, {token, userId: foundUser.id, profileId, name: foundUser.name, profile_photo: foundUser.profile_photo}, 'successfully logged in user');
   } catch (err) {
     next(err);
   }

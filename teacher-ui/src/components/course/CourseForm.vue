@@ -5,6 +5,8 @@ import { Button } from '@/components/ui/button'
 import Multiselect from 'vue-multiselect'
 import {useRouter} from "vue-router"
 import 'vue-multiselect/dist/vue-multiselect.css'
+import { useMutation } from '@tanstack/vue-query'
+import {type CourseType, createCourseService} from "@/services/course"
 const supportedLanguages = ['JavaScript', 'Python', 'Java', 'C++', 'Ruby', 'Go', 'TypeScript']
 const $router = useRouter()
 const props = defineProps<{
@@ -17,7 +19,6 @@ const props = defineProps<{
     contributors: { userId: string; name: string }[]
   }
 }>()
-
 const formData = ref({
   title: props?.initialData?.title || '',
   description: props?.initialData?.description || '',
@@ -25,7 +26,15 @@ const formData = ref({
   language: props?.initialData?.language || '',
   contributors: props?.initialData?.contributors || []
 })
-
+const {isPending} = useMutation({
+  mutationFn: (courseData: CourseType) => createCourseService(courseData),
+  onSuccess: (axiosResponse) => {
+    const payload = axiosResponse.data.data;
+    console.log(payload);
+    // revalidate dashboard query key.
+    $router.push('/dashboard')
+  }
+})
 const availableContributors = ref([
   { userId: '1', name: 'John Doe' },
   { userId: '2', name: 'Jane Smith' },
@@ -43,8 +52,9 @@ const handleImageChange = (event: Event) => {
   }
 }
 console.log(formData.value.contributors);
-const handleSubmit = (e: Event) => {
+const handleSubmit = async (e: Event) => {
     e.preventDefault()
+    // upload the image if any, get the url
   // Handle form submission logic
   console.log('Form submitted:', formData.value.contributors)
 }
@@ -97,6 +107,6 @@ const handleSubmit = (e: Event) => {
         />
       </div>
     </div>
-  <Button  class="mt-4" type="submit">{{ props.forEdit ? 'Save' : 'Create' }}</Button>
+  <Button  class="mt-4" type="submit" :disabled="isPending">{{ props.forEdit ? 'Save' : 'Create' }}</Button>
   </form>
 </template>

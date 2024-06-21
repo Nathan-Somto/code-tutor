@@ -1,6 +1,7 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import HomeView from '../views/HomeView.vue'
 import MainLayout from '@/components/layout/MainLayout.vue'
+import { useAuthStore } from '@/stores/auth';
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
@@ -70,6 +71,11 @@ const router = createRouter({
       component: () => import('../views/RegisterView.vue')
     }
   ]
+});
+router.beforeEach((to, from, next) => {
+  let {isAuthenticated} = useAuthStore();
+  const publicPages = ['login', 'register']
+  if ( !publicPages.includes(to.name?.toString() ?? '') && !isAuthenticated) next({ name: 'login' })
+  else next()
 })
-
 export default router

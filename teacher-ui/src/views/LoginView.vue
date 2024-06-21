@@ -3,20 +3,49 @@ import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
 import {ChevronLeft} from 'lucide-vue-next';
+import { useToast } from '@/components/ui/toast'
 // write all the missing code here
 import { ref } from 'vue';
 // import the $router stuff here
 import { useRoute, useRouter } from 'vue-router';
 import {RouterLink} from 'vue-router';
+import { useMutation } from '@tanstack/vue-query'
+import {type LoginType, loginService} from "@/services/auth"
+import {useAuthStore} from "@/stores/auth"
 const $router = useRouter();
 // put state for remember_me, email, password here
 const remember_me = ref(false);
 const email = ref('');
 const password = ref('');
+const {login} = useAuthStore();
 // create login function here
-const login = () => {
-  console.log('login');
-  $router.push('/dashboard');
+
+
+const { toast } = useToast()
+const { isPending,mutate } = useMutation({
+  mutationFn: (data: LoginType) => loginService(data),
+  onSuccess: (axiosResponse) => {
+    const {data: payload} = axiosResponse.data;
+    console.log(payload);
+    login(payload);
+    $router.push('/dashboard');
+  },
+  onError: (error) => {
+    console.error(error);
+    // show the toast notification here
+    toast({
+      title: "login failed",
+      description: "this likely due to a server error!",
+      variant: "destructive"
+    })
+  }
+})
+const onSubmit = () => {
+  const data: LoginType = {
+  email: email.value,
+  password: password.value
+}
+  mutate(data);
 };
 </script>
 <template>
@@ -48,16 +77,21 @@ const login = () => {
     <CardContent class="grid gap-4">
       <div class="grid gap-2">
         <Label for="email">Email</Label>
-        <Input id="email" type="email" placeholder="m@example.com" required />
+        <Input id="email" type="email" placeholder="m@example.com" required v-model="email" />
       </div>
       <div class="grid gap-2">
         <Label for="password">Password</Label>
-        <Input id="password" type="password" required placeholder='******' />
+        <Input id="password" type="password" required placeholder='******' v-model="password" />
       </div>
     </CardContent>
     <CardFooter>
-      <Button class="w-full" @click='login'>
-        Sign in
+      <Button class="w-full" @click='onSubmit' :disabled="isPending">
+         <template v-if="!isPending">
+          Sign in
+         </template>
+         <template v-else>
+          Loading...
+         </template>
       </Button>
     </CardFooter>
     <div class="mt-2 text-center text-sm">
