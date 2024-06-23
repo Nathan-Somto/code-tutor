@@ -2,11 +2,11 @@ import { LevelType } from "@prisma/client";
 import { prisma } from "../config/db";
 import { BadRequestError } from "../errors/httpErrors";
 
-export const checkLevelType = async(levelId: string, levleType:LevelType) => {
+export const checkLevelType = async(levelId: string, levelType:LevelType) => {
 const level = await prisma.level.findFirst({
     where: {
         id: levelId,
-        levelType: levleType
+        levelType: levelType
     }
 })
 if(!level){

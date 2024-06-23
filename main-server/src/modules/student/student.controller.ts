@@ -1,3 +1,4 @@
+
 import { Request, Response, NextFunction } from "express";
 import {
   BadRequestError,
@@ -918,6 +919,79 @@ const getProfile = async (req:Request, res: Response, next: NextFunction) => {
   }
 }
 
+const getStudents = async(req: Request, res: Response, next: NextFunction) => {
+  // function in charge of getting all students
+  // to be displayed on the teacher ui page as  a table
+  // profile_photo name username xpPoints rank total enrolled courses streak count
+  // let it be paginated with a default page size of 10
+  // order  by newly created students
+  try{
+    const {pageSize = '10', page = '1'} = req.query;
+    let size = parseInt(pageSize as string, 10);
+    let currentPage = parseInt(page as string, 10);
+    if(isNaN(size) || isNaN(currentPage)){
+      throw new BadRequestError("Invalid page or pageSize query parameter");
+    }
+    size = Math.abs(size);
+    currentPage = Math.abs(currentPage);
+    const offset = (currentPage - 1) * size;
+    const totalStudents = await prisma.student.count();
+    const totalPages = Math.ceil(totalStudents / size);
+    const students = await prisma.student.findMany({
+      orderBy: {
+        user: {
+          joinedAt: 'desc'
+        }
+      },
+      take: size,
+      skip: offset,
+      select: {
+        username: true,
+        id: true,
+        xpPoints: true,
+        rank: true,
+        user: {
+          select: {
+            name: true,
+            profile_photo: true
+          }
+        },
+        enrolledCourses: {
+          select: {
+            id: true
+          }
+        },
+        streaks: {
+          select: {
+            currentCount: true
+          }
+        }
+      }
+    });
+    // let the user profile phot and username be direct properties of the student object , not nested streaks count as well
+     const responseData =  {
+      totalStudents,
+      pageSize: size,
+      currentPage,
+      students: students.map(student => {
+        return {
+          id: student.id,
+          username: student.username,
+          xpPoints: student.xpPoints,
+          rank: student.rank,
+          totalEnrolledCourses: student.enrolledCourses.length,
+          streakCount: student?.streaks?.currentCount ?? 0,
+          profile_photo: student.user.profile_photo,
+          name: student.user.name
+        }
+      })
+     }
+    ResponseHandler.send(res, 200, responseData, "successfully retrieved students");
+  }
+  catch(err){
+
+  }
+}
 export {
   completeLevel,
   freezeStreaks,
@@ -931,5 +1005,6 @@ export {
   getLeaderboard,
   getLevelProgress,
   getProfile,
-  getLeaderboardPosition
+  getLeaderboardPosition,
+  getStudents
 };

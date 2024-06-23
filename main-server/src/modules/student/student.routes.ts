@@ -13,8 +13,10 @@ import {
   getLeaderboard,
   getLeaderboardPosition,
   getProfile,
+  getStudents
 } from "./student.controller";
 import auth from "../auth";
+import { teacherMiddleware } from "../../middleware/teacher.middleware";
 const router = express.Router();
 router.use(auth);
 // Student Progress (general app) i.e totalXp, rank, streak data., gems
@@ -42,4 +44,6 @@ router.post("/:studentId/save-code", saveCodeSolution);
 router.get("/leaderboard", getLeaderboard);
 router.get("/leaderboard-position", getLeaderboardPosition);
 
+router.use(teacherMiddleware);
+router.get('/', getStudents);
 export default router;

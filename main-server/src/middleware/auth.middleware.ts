@@ -4,7 +4,7 @@ import jwt from "jsonwebtoken";
 import { prisma } from '../config/db';
 export const  auth  = async (req: Request, res: Response, next: NextFunction) =>{
     try{
-        const headers = req.headers['x-auth-token'];
+        const headers = req.headers['authorization'] ?? req.headers['Authorization'];
         if(!headers){
             throw new UnAuthorizedError( 'No token provided');
         }

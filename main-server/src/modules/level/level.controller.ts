@@ -23,21 +23,22 @@ const createQuizlevel = async (
     const profileId = req.user?.profileId;
     const course = canEditCourse(courseId, profileId ?? "");
     const body = req.body;
-    const { answer, options, quizType, question, levelId } = zodValidator(
+    const quizzes = zodValidator(
       createQuizLevelSchema,
-      body
+      body.quizzes
     );
-    await checkLevelType(levelId, "Quiz");
-    const quiz = await prisma.quizChallenge.create({
-      data: {
-        answer,
-        options,
-        question,
-        quizType,
+    await checkLevelType(body.levelId, "Quiz");
+    const quiz = await prisma.quizChallenge.createMany({
+      data: quizzes.map((quiz) => ({
+        question: quiz.question ?? "",
+        answer: quiz.answer,
+        options: quiz.options,
+        levelId: body.levelId,
         level: {
-          connect: { id: levelId },
+          connect: { id: body.levelId },
         },
-      },
+        quizType: body.quizType,
+      })),
     });
     ResponseHandler.send(res, 201, quiz, "succesfully created quiz");
   } catch (err) {
@@ -79,7 +80,7 @@ const createCodeLevel = async (
     await prisma.testCase.createMany({
       data: testCases.map((testCase) => ({
         codeChallengeId: newCodeChallenge.id,
-        input: testCase.input,
+        input: testCase.input ?? '',
         expectedOutput: testCase.expectedOutput,
         description: testCase.description,
       })),
@@ -254,8 +255,14 @@ const createLevel = async (req: Request, res: Response, next: NextFunction) => {
     const profileId = req.user?.profileId;
     const course = canEditCourse(courseId, profileId ?? "");
     const body = req.body;
-    const { topicId, gems, levelType, xp, mysteryLevel, order, difficulty, name } =
+    const { topicId, gems, levelType, xp, mysteryLevel, difficulty, name } =
       zodValidator(createLevelSchema, body);
+    // get the  next available order for the level from the topic
+    const order = await prisma.level.count({
+      where: {
+        topicId,
+      },
+    });
     const newLevel = await prisma.level.create({
       data: {
         topicId,
@@ -263,9 +270,9 @@ const createLevel = async (req: Request, res: Response, next: NextFunction) => {
         levelType,
         xp,
         mysteryLevel,
-        order,
         difficulty,
-        name
+        name,
+        order,
       },
     });
     ResponseHandler.send(res, 201, newLevel, "Level created successfully");
@@ -288,9 +295,11 @@ const getLevels = async (req: Request, res: Response, next: NextFunction) => {
         id: true,
         difficulty: true,
         levelType: true,
-        name: true
+        name: true,
+        xp: true,
       },
     });
+    console.log(levels);
     ResponseHandler.send(res, 200, levels, "Levels retrieved successfully");
   } catch (err) {
     next(err);

@@ -350,16 +350,18 @@ const getCourse = async (req: Request, res: Response, next: NextFunction) => {
     if (!course) {
       throw new BadRequestError("teacher does not have access to this course.");
     }
-    course.contributors.unshift(course.creator);
+    const responseData = {
+      contributors: [course.creator.user, ...course.contributors.map((contributor) => contributor.user)],
+      title: course.title,
+      image_url: course.image_url,
+      id: course.id,
+      topics: course.Topic,
+      enrolledStudentsId: course.enrolledStudentsId,
+      }
     ResponseHandler.send(
       res,
       200,
-      {
-        ...course,
-        enrolledStudentsId: undefined,
-        creator: undefined,
-        totlaEnrolledStudents: course.enrolledStudentsId.length,
-      },
+      responseData,
       "succesfully retrieved course information"
     );
   } catch (err) {

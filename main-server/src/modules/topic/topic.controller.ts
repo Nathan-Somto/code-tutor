@@ -5,9 +5,10 @@ import { ResponseHandler } from "../../utils/responseHandler";
 import { canEditCourse } from "../../utils/canEditCourse";
 const createTopic = async (req: Request, res: Response, next: NextFunction) => {
   try {
-    const { courseId } = req.params;
+    //const { courseId } = req.params;
     const teacherId = req.user?.profileId;
-    const { name, description } = req.body;
+    const { name, description,courseId } = req.body;
+    console.log('in create topic: ',req.body)
     if(typeof name !== 'string'  ||  typeof description !== 'string'){
         throw new BadRequestError('name and description must be strings')
     }

@@ -13,6 +13,6 @@ router.use(teacherMiddleware);
 router.post('/', createLevel).get('/', getLevels);
 router.post("/quiz", createQuizlevel);
 router.post("/lesson", createLessonLevel);
-router.post("/code-challenge", createCodeLevel);
+router.post("/code", createCodeLevel);
 router.get("/quiz", getQuizzes);
 export default router;

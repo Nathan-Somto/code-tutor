@@ -12,8 +12,9 @@ if (process.env.NODE_ENV === 'production'){
 }
 else{
     global.db = global.db ?? new PrismaClient()
-    global.db.$connect().then(() => {console.log("Db Connected")}).catch(() => {
+    global.db.$connect().then(() => {console.log("Db Connected")}).catch((err) => {
         console.log("Failed to connect in cache")
+        console.log(err.message)
      })
      prisma = global.db
 }

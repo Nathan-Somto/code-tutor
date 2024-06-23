@@ -3,7 +3,7 @@ import { $Enums } from "@prisma/client";
 import * as z from "zod";
 const ChallengeTypeEnum = z.enum(["FIX_THE_BUG", "ALGORITHM", "COMPLETE_CODE"]);
 const TestCaseSchema = z.object({
-  input: z.string().min(1),
+  input: z.string().optional(),
   expectedOutput: z.string().min(1),
   description: z.string().min(1),
 });
@@ -30,17 +30,16 @@ export type TestCaseInput = z.infer<typeof TestCaseSchema>;
 export type ChallengeType = z.infer<typeof ChallengeTypeEnum>;
 // create a zod schema for this
 // question is optional when it is matching pairs
-export const createQuizLevelSchema = z.object({
+export const createQuizLevelSchema = z.array(z.object({
   question: z.string().optional(),
   answer: z.string(),
   options: z.array(z.string()),
-  levelId: z.string(),
   quizType: z.enum([
     $Enums.QuizType.MULTIPLE_CHOICE,
     $Enums.QuizType.MATCHING_PAIRS,
     $Enums.QuizType.COMPLETE_SEQUENCE,
   ]),
-});
+}));
 export type CreateQuizLevelSchema = z.infer<typeof createQuizLevelSchema>;
 
 const Difficulty = z.enum(["Easy", "Medium", "Hard", "Advanced", "Expert"]);
@@ -52,7 +51,6 @@ export const createLevelSchema = z.object({
   levelType: LevelType.default("Lesson"),
   xp: z.number().int().min(10, "XP must be at least 10").max(150, "XP must be at most 150"),
   mysteryLevel: z.boolean(),
-  order: z.number().int().min(0, "Order must be a non-negative integer"),
   difficulty: Difficulty.default("Easy"),
   name: z.string().min(3, "level name must be at least 3 characters").max(300, "level name must be at most 300 characters"),
 });
