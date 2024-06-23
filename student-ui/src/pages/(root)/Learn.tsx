@@ -12,7 +12,7 @@ export default function Learn() {
   const [topics, setTopics] = React.useState<TopicProps>([]);
   React.useEffect(() => {
     const sampleLevels: (LevelButtonProps & { id: string })[] = [];
-const currentLevelIndex = 5; // Set the index of the current level
+const currentLevelIndex = 9; // Set the index of the current level
 for (let i = 1; i <= 12; i++) {
   const levelType = i % 3 === 0 ? "quiz" : i % 2 === 0 ? "code" : "lesson";
 

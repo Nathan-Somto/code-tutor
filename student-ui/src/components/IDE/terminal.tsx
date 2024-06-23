@@ -36,15 +36,16 @@ export default function Terminal({
       passed: true
   },
   ]
-  console.log(sampleTestCases)
+  console.log("the testCases", testCases)
+  //console.log(sampleTestCases)
   const [closeTerminal, setCloseTerminal]= React.useState<boolean>(false);
   const [currTestCase, setCurrTestCase] = React.useState(-1);
   const numberOfPassed = React.useMemo(
-    () => sampleTestCases.filter((testCase) => testCase.passed).length,
+    () => testCases.filter((testCase) => testCase.passed).length,
     [testCases]
   );
   const numberOfFailed = React.useMemo(
-    () => sampleTestCases.length - numberOfPassed,
+    () => testCases.length - numberOfPassed,
     [testCases]
   );
   function handleTerminalClose(){
@@ -145,7 +146,7 @@ export default function Terminal({
           <h3 className="text-xl font-medium">Test Results</h3>
         </div>
         <div className="pl-3.5 ">
-          {sampleTestCases.map((testCase, index) => (
+          {testCases.map((testCase, index) => (
             <div key={testCase.description + index} className="space-y-1.5">
               <div className="text-[15px] font-medium">
                 <button
@@ -205,7 +206,7 @@ export default function Terminal({
               ))}
             </div>
           ))}
-          {numberOfPassed === testCases.length && (
+          {testCases.length > 1 && numberOfPassed === testCases.length && (
           <div className="h-12 px-5 py-3 border-dotted border dark:border-green-700 border-green-400 flex items-center gap-2 text-green-400 dark:text-green-700">
             <CheckCircle2Icon />
             <p className="font-medium">All Test's Passed!</p>

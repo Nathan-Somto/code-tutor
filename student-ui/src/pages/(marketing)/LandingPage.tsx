@@ -39,7 +39,7 @@ export default function LandingPage() {
             <h1 className="my-4 text-4xl md:text-5xl  text-white opacity-75 font-bold leading-tight text-center md:text-left">
               Learn{" "}
               <span className="bg-clip-text text-transparent bg-gradient-to-r from-green-400 via-indigo-500 to-purple-500">
-                Any Programming{" "}
+                A Programming{" "}
               </span>
               Language!
             </h1>
@@ -49,14 +49,14 @@ export default function LandingPage() {
             <div className="flex gap-5 xl:w-[75%] flex-col md:flex-row mt-3 w-full justify-center md:justify-start">
               <Button
                 variant="primary"
-                onClick={() => navigate("/login")}
+                onClick={() => navigate("/register")}
                 className=" px-2 md:px-6 w-full"
               >
                 Get Started
               </Button>
               <Button
                 variant="primary-outline"
-                onClick={() => navigate("/register")}
+                onClick={() => navigate("/login")}
                 className="w-full"
               >
                 I Already Have an Account

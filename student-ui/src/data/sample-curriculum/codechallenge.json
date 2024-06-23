@@ -12,7 +12,7 @@
                 "passed": null
             }
         ],
-        "starterFile": "### Counting Vowels Challenge\n\nImagine you are tasked with creating a function that can assist a child learning to count vowels in words. Your function `count_vowels` should skillfully count the vowels in a given string, helping the child learn basic phonetics.\n\nYour task is to implement the `count_vowels` function, which takes a string as input and returns the number of vowels it contains.",
+        "starterFile": "## Counting Vowels Challenge\n\nImagine you are tasked with creating a function that can assist a child learning to count vowels in words. Your function `count_vowels` should skillfully count the vowels in a given string, helping the child learn basic phonetics.\n\nYour task is to implement the `count_vowels` function, which takes a string as input and returns the number of vowels it contains.",
         "starterCode": "#type your code here\ndef count_vowels(s):\n    pass"
     },
     {
@@ -28,7 +28,7 @@
                 "passed": null
             }
         ],
-        "starterFile": "### Reversing String Challenge\n\nPicture yourself as a detective decoding a secret message. You need to reverse a sequence of characters to uncover the hidden meaning. Your task is to implement the `reverse_string` function to decrypt the message.\n\nImplement the `reverse_string` function, which takes a string as input and returns the reversed version of it.",
+        "starterFile": "## Reversing String Challenge\n\nPicture yourself as a detective decoding a secret message. You need to reverse a sequence of characters to uncover the hidden meaning. Your task is to implement the `reverse_string` function to decrypt the message.\n\nImplement the `reverse_string` function, which takes a string as input and returns the reversed version of it.",
         "starterCode": "#type your code here\ndef reverse_string(s):\n    pass"
     },
     {

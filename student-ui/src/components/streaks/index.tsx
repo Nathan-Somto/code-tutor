@@ -57,11 +57,11 @@ export default function Streaks({
                 streakValue === 2 && "bg-blue-500"
               )}
             >
-              {streakValue === 1 ? (
+              { index < currentDay && (streakValue === 1 ? (
                 <CheckIcon className="w-5 h-5 text-white" />
               ) : streakValue === 2 ? (
                 <ShieldCheckIcon className="w-5 h-5" />
-              ) : null}
+              ) : null)}
             </div>
             <p
               className={cn(

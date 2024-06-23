@@ -6,6 +6,7 @@ import {
   FormMessage,
   FormLabel,
 } from "@/components/ui/form";
+import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -23,12 +24,13 @@ export default function RegisterForm({
   title = "Create your Profile",
   buttonText = "Create Account",
 }: Props) {
+  const navigate = useNavigate();
   const inputRef = React.useRef<HTMLInputElement>();
   const formSchema = z.object({
     name: z.string().min(2).optional(),
     email: z.string().email(),
     profile_photo: z.string().optional(),
-    dob: z.date(),
+    dob: z.string(),
     password: z.string(),
     username: z.string().min(5).max(24),
   });
@@ -41,6 +43,7 @@ export default function RegisterForm({
 
   function onSubmit(values: z.infer<typeof formSchema>) {
     console.log(values);
+    navigate("/courses");
   }
 
   const handleImage = (files: React.ChangeEvent<HTMLInputElement>) => {
@@ -168,7 +171,7 @@ export default function RegisterForm({
           )}
         />
         </div>
-        <Button disabled={form.formState.isDirty} variant="primary" className="w-full mt-5">{buttonText}</Button>
+        <Button /* disabled={form.formState.isDirty} */ variant="primary" className="w-full mt-5">{buttonText}</Button>
       </form>
     </Form>
   );

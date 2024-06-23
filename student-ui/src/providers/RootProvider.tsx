@@ -47,7 +47,7 @@ export default function RootProvider({children}:{ children: React.ReactNode }){
             currentCourse: currentCourse ?? "",
             streakData:{
                 currentCount: 3,
-                days: [0,2,1,1,0,0,0],
+                days: [0,0,0,1,1,1,0],
                 currentDay: new Date().getDay()
             },
             hints : {

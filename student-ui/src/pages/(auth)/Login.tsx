@@ -33,7 +33,8 @@ export default function LoginPage() {
       // send the data to the main server login endpoint
       //const response = await mainApi.post('/auth/login', loginData);
       // if the user's email has not been verified send them to the sent email page
-      navigate(`/sent-email/?email=${"mkparusomtochi26@gmail.com"}&sent-mail=${true}`);
+      ///navigate(`/sent-email/?email=${"mkparusomtochi26@gmail.com"}&sent-mail=${true}`);
+      navigate('/courses')
       // store the user's profile in global state
       // redirect to their dashboard
     } catch (err) {

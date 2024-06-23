@@ -31,6 +31,7 @@ import { TerminalProps } from "@/components/IDE/types";
 import { Spinner } from "@/components/ui/spinner";
 import challengeData from "@/data/sample-curriculum/codechallenge.json";
 import { useNavigate } from "react-router-dom";
+import ExitBtn from "@/components/challenges/ExitBtn";
 type TestCase = {
     input: null  |  string;
     description: string;
@@ -44,6 +45,15 @@ function CodeChallenge() {
   // check if the user passed
   // show submit button if they passed (show run tests otherwise)
   // when they submit, store
+  const [openModal, setOpenModal] = React.useState(false);
+  
+  async function handleSessionEnd(){
+    // store the user's current progress (get this from the store)
+    // redirect to the learn page
+    navigate(`/learn/${courseId}`)
+    // close the modal
+    setOpenModal(false);
+  }
   const { levelId, courseId } = useParams();
   const [testCases, setTestCases] = React.useState<TestCase>(
     []
@@ -71,7 +81,8 @@ function CodeChallenge() {
         code: codeContent,
         input: "",
       });
-      setOutput(response.data.output);
+      //console.log(response.data.body.output);
+      setOutput(response.data.body.output);
     } catch (err) {
       if (err instanceof Error) {
         console.log(err.message);
@@ -83,6 +94,12 @@ function CodeChallenge() {
   async function handleSubmitCick() {
     setSubmitting(true);
     try {
+      console.log({
+        code: codeContent,
+        language: "py",
+        tests: testCases,
+        functionCall
+      })
       // send code to test code endpoint
       const response = await axios.post('http://localhost:8080/test-code', {
         code: codeContent,
@@ -180,7 +197,9 @@ function CodeChallenge() {
               color="foreground"
             />
           ) : (
-            <ReactMarkdown markdown={markdownData} />
+            <div>
+              <ReactMarkdown markdown={markdownData} />
+            </div>
           )}
         </div>
       </ResizablePanel>
@@ -195,6 +214,7 @@ function CodeChallenge() {
         <div>
           <div className="w-full bg-background flex justify-between items-center  px-7 border-b py-3 border-grey-800">
             <div className="flex items-center gap-5">
+            <ExitBtn handleSessionEnd={handleSessionEnd} openModal={openModal} setOpenModal={setOpenModal} levelType="code challenge"/>
               <div className="flex items-center gap-1.5">
                 <Code className="text-green-600" size={20} />
                 <p className="font-mono">Code</p>
@@ -212,7 +232,7 @@ function CodeChallenge() {
                       disabled={processingCode || submitting}
                     >
                       {processingCode ? (
-                        <Spinner size="sm" />
+                        <Spinner size="md"  color="slate" />
                       ) : (
                         <>
                           <Play size={16} className="mr-1.5" /> Run
