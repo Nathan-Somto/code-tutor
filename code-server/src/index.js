@@ -33,6 +33,7 @@ app.post("/test-code", async (req,res) => {
        console.log(output)
        sendResponse(res,200,output);
     }catch(err){
+        console.log(err)
         sendResponse(res, err?.status || 500, err.message)
     }
 })

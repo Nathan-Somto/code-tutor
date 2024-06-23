@@ -9,7 +9,7 @@ async function testCode({
   test_cases = [],
   functionCall = undefined,
 }) {
-  console.log("in test code: ", test_cases);
+  //console.log("in test code: ", test_cases);
 
   if (test_cases.length === 0) {
     throw {
@@ -41,18 +41,18 @@ async function testCode({
       language,
       input: test.input,
     });
-    console.log(response)
+    console.log(response.output)
    test.passed = response?.output?.trim() === test.expectedOutput.trim();
-   test.output = output;
+   test.output = response?.output;
    delete test.input;
     if (!test.passed) {
       test.outputReceived = response?.output || response?.error;
     }
-
+    console.log("test", test);
     return test;
 }
 const runTests = await Promise.all(test_cases.map((test) => runSingleTest(test)));
-
+  console.log("run tests", runTests);
   return runTests;
 }
 module.exports = {testCode}
