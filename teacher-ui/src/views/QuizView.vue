@@ -4,11 +4,22 @@ import { useQuizStore } from '@/stores/quiz'
 import { Button } from "@/components/ui/button"
 import { ChevronLeft,PlusIcon } from 'lucide-vue-next'
 import { useRouter, useRoute } from 'vue-router'
+import { reactive, watch } from "vue"
 const quizStore = useQuizStore()
 const $router = useRouter()
 const $route = useRoute()
+const data = reactive({
+  quizzes: quizStore.quizzes
+});
+watch(quizStore.quizzes, (newValue) => {
+  data.quizzes = newValue
+})
 const handleAddClick = () => {
     $router.push(`/dashboard/courses/${$route.params.id}/topics/${$route.params.topicId}/levels/create-quiz`)
+}
+const onSuccess = () => {
+  // empties the quizzes cache
+  quizStore.publishQuizzes()
 }
 </script>
 <template>
@@ -23,7 +34,8 @@ const handleAddClick = () => {
         <GamificationRules
             initialDifficulty="Medium"
             levelType="Quiz"
-           :data="{quizzes: quizStore.quizzes}"
+           :data="data"
+           :onSuccess="onSuccess"
         />
     </header>
 <div class="p-4 mt-2">

@@ -1,12 +1,16 @@
 <script setup lang="ts">
-import { ref } from 'vue'
+import { computed, ref } from 'vue'
 import { Input } from '@/components/ui/input'
 import { Button } from '@/components/ui/button'
 import Multiselect from 'vue-multiselect'
 import {useRouter} from "vue-router"
 import 'vue-multiselect/dist/vue-multiselect.css'
-import { useMutation } from '@tanstack/vue-query'
+import { useMutation, useQueryClient } from '@tanstack/vue-query'
 import {type CourseType, createCourseService} from "@/services/course"
+import { uploadFiles} from '@/config/uploadthing'
+import { useToast} from '../ui/toast'
+import { useAuthStore } from '@/stores/auth'
+import { displayError } from '@/lib/displayError'
 const supportedLanguages = ['JavaScript', 'Python', 'Java', 'C++', 'Ruby', 'Go', 'TypeScript']
 const $router = useRouter()
 const props = defineProps<{
@@ -25,26 +29,33 @@ const formData = ref({
   image_url: props?.initialData?.image_url || '',
   language: props?.initialData?.language || '',
   contributors: props?.initialData?.contributors || []
-})
-const {isPending} = useMutation({
+});
+const imageFile = ref<File>()
+const startedSubmission = ref<boolean>(false)
+const {invalidateQueries} = useQueryClient();
+const {isPending, mutate} = useMutation({
   mutationFn: (courseData: CourseType) => createCourseService(courseData),
   onSuccess: (axiosResponse) => {
-    const payload = axiosResponse.data.data;
+    const payload = axiosResponse.data.body;
     console.log(payload);
     // revalidate dashboard query key.
-    $router.push('/dashboard')
-  }
+    invalidateQueries({
+      queryKey: ['dashboard']
+    })   
+    $router.push('/dashboard') 
+  }  
 })
 const availableContributors = ref([
   { userId: '1', name: 'John Doe' },
   { userId: '2', name: 'Jane Smith' },
   { userId: '3', name: 'Alice Johnson' }
 ])
-
+const {toast} = useToast();
 const handleImageChange = (event: Event) => {
   const input = event.target as HTMLInputElement
   if (input.files && input.files[0]) {
     const reader = new FileReader()
+    imageFile.value =input.files[0]
     reader.onload = () => {
       formData.value.image_url = reader.result as string
     }
@@ -52,12 +63,47 @@ const handleImageChange = (event: Event) => {
   }
 }
 console.log(formData.value.contributors);
+const {auth} = useAuthStore();
 const handleSubmit = async (e: Event) => {
-    e.preventDefault()
-    // upload the image if any, get the url
-  // Handle form submission logic
-  console.log('Form submitted:', formData.value.contributors)
+  e.preventDefault()
+  startedSubmission.value = true
+  try{
+    if(!imageFile.value){
+      toast({
+        title: "Image is required",
+        description: "Please upload an image for the course",
+        variant: "destructive"
+      })
+      return;
+    }
+   const result = await uploadFiles('imageUploader', {
+    files: [imageFile.value as File],
+    skipPolling: true,
+   })
+  console.log("result print: ",result, result[0].url)
+   let newCourse= {
+    title: formData.value.title,
+    description: formData.value.description,
+    image_url: result[0].url,
+    contributorIds: formData.value.contributors.map(c => c.userId),
+    language: formData.value.language,
+    creatorId: auth?.profileId as string
+   }
+   console.log(newCourse)
+     mutate(newCourse)
+  }
+  catch(err){
+    displayError(toast, err, "An error occurred while creating the course");
+  }
+  finally {
+    startedSubmission.value = false
+  }
+   
 }
+// use a computed value for btn value
+const btnValue = computed(() => {
+  return startedSubmission.value ? 'Submitting...' : props.forEdit ? 'Update Course' : 'Create Course'
+})
 </script>
 
 <template>
@@ -107,6 +153,6 @@ const handleSubmit = async (e: Event) => {
         />
       </div>
     </div>
-  <Button  class="mt-4" type="submit" :disabled="isPending">{{ props.forEdit ? 'Save' : 'Create' }}</Button>
+  <Button  class="mt-4" type="submit" :disabled="startedSubmission || isPending">{{ btnValue }}</Button>
   </form>
 </template>

@@ -3,12 +3,16 @@ import { MdEditor } from '@/components/md-editor'
 import { DashboardHeader } from '@/components/dashboard-header'
 import { Button } from '@/components/ui/button'
 import { SaveIcon, UploadCloudIcon } from 'lucide-vue-next'
-import { ref } from 'vue'
+import { ref, watch, reactive } from 'vue'
 import GamificationRules from "@/components/modals/GamificationRules.vue"
 const pages = ref(['# Page 1 Content', '# Page 2 Content'])
-const data = {
-  content: pages
-}
+const data = reactive({
+  content: pages.value
+})
+
+watch(pages, (newValue) => {
+  data.content = newValue
+})
 const handlePageUpdates = (updatedPages: string[]) => {
   pages.value = updatedPages
 }

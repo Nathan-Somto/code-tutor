@@ -2,11 +2,12 @@
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card'
 defineProps<{
   title: string
-  value: number
+  value: number,
+  onClick?: () =>void
 }>()
 </script>
 <template>
-  <Card>
+  <Card @click="onClick">
     <CardHeader>
       <CardTitle>{{ title }}</CardTitle>
     </CardHeader>

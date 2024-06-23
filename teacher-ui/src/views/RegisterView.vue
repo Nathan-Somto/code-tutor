@@ -8,6 +8,7 @@ import { useMutation } from '@tanstack/vue-query'
 import {type Auth, useAuthStore} from '@/stores/auth'
 import {useToast} from "@/components/ui/toast"
 import {ref} from "vue";
+import { displayError } from '@/lib/displayError'
 const $router = useRouter();
 
 /* i want to control all my input fields and get their info when i submit */
@@ -22,17 +23,13 @@ const {toast} = useToast();
 const {isPending, mutate} = useMutation({
   mutationFn: (userInfo: RegisterType) => registerService(userInfo),
   onSuccess: (axiosResponse) => {
-    const { name, profileId, userId, token} = axiosResponse.data.data as Auth;
+    const { name, profileId, userId, token} = axiosResponse.data.body as Auth;
     login({name, profileId, userId, token, profile_photo: undefined});
     $router.push('/dashboard');
   },
   onError: (error) => {
     console.error(error);
-    toast({
-      title: "sign up failed",
-      description: "this likely due to a server error!",
-      variant: "destructive"
-    })
+   displayError(toast, error, 'Registration failed');
   }
 })
 function handleSubmit() {

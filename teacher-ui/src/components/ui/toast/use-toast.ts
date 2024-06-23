@@ -10,7 +10,7 @@ export type StringOrVNode =
   | VNode
   | (() => VNode)
 
-type ToasterToast = ToastProps & {
+export type ToasterToast = ToastProps & {
   id: string
   title?: string
   description?: StringOrVNode
@@ -129,7 +129,7 @@ function useToast() {
   }
 }
 
-type Toast = Omit<ToasterToast, 'id'>
+export type Toast = Omit<ToasterToast, 'id'>
 
 function toast(props: Toast) {
   const id = genId()

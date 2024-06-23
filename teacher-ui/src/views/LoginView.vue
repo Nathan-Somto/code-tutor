@@ -12,6 +12,8 @@ import {RouterLink} from 'vue-router';
 import { useMutation } from '@tanstack/vue-query'
 import {type LoginType, loginService} from "@/services/auth"
 import {useAuthStore} from "@/stores/auth"
+import type { AxiosError } from 'axios';
+import { displayError } from '@/lib/displayError';
 const $router = useRouter();
 // put state for remember_me, email, password here
 const remember_me = ref(false);
@@ -25,19 +27,14 @@ const { toast } = useToast()
 const { isPending,mutate } = useMutation({
   mutationFn: (data: LoginType) => loginService(data),
   onSuccess: (axiosResponse) => {
-    const {data: payload} = axiosResponse.data;
-    console.log(payload);
+    const {body: payload} = axiosResponse.data;
     login(payload);
     $router.push('/dashboard');
   },
   onError: (error) => {
     console.error(error);
     // show the toast notification here
-    toast({
-      title: "login failed",
-      description: "this likely due to a server error!",
-      variant: "destructive"
-    })
+   displayError(toast, error, 'Login failed');
   }
 })
 const onSubmit = () => {

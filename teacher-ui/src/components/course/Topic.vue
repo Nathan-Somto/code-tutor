@@ -6,6 +6,10 @@ import {RouterLink} from "vue-router"
 import { Button } from '@/components/ui/button'
 import { useRouter, useRoute } from 'vue-router'
 import courseData from '@/components/course/data.json'
+import type { DifficultyKeys } from '../modals/GamificationRules.vue'
+import { getTopicLevelsService } from '@/services/topic'
+import { useQuery } from '@tanstack/vue-query'
+import { AxiosError } from 'axios'
 const element = defineProps<{
   id: string
   name: string
@@ -16,24 +20,52 @@ const element = defineProps<{
 type LevelType = 'Code' | 'Lesson' | 'Quiz'
 const IconMap = { Code: CodeIcon, Lesson: BookOpenIcon, Quiz:  FileQuestionIcon }
 type Level = {
-  name: string
-  xp: number
-  levelType: LevelType
-  id: string
+    id: string;
+    name: string;
+    order: number;
+    difficulty: DifficultyKeys;
+    levelType: LevelType;
+    xp: number;
+}
+type ResponseData = {
+  body:Level[]
+ 
 }
 const $router = useRouter()
 const $route = useRoute()
 const newIndex = ref()
 const showLevels = ref(false)
 const levels = ref<Level[] | null>(null)
-// if showLevels is true and levels is not null, find the levels associated with this topic
-watch(showLevels, (newValue) => {
-  if (newValue) {
-    if (levels.value === null) {
-      levels.value = courseData.levels[element.id] as Level || []
+console.log(element.id)
+const {data: response,  isPending, refetch} = useQuery({
+  queryKey: ['course', $route.params.id, element.id],
+  queryFn: () => getTopicLevelsService($route.params.id as string, element.id),
+  enabled: false,
+  retry(failureCount, error) {
+    if (error instanceof AxiosError && error?.response?.status === 404) {
+      return false
     }
-  } else {
-    levels.value = null
+    return failureCount < 3
+  }
+
+})
+watch(showLevels, (newValue) => {
+  if (newValue && levels.value === null) {
+    refetch()
+  }
+})
+// if showLevels is true and levels is not null, find the levels associated with this topic
+watch( response, (newValue) => {
+  console.log('in watch ',newValue?.data)
+  if ( newValue?.data?.body) {
+    levels.value =  (newValue.data as ResponseData)?.body?.map((level: Level) => ({
+      id: level.id,
+      name: level.name,
+      order: level.order,
+      difficulty: level.difficulty,
+      levelType: level.levelType,
+      xp: level.xp
+    })).sort((a: Level, b: Level) => a.order - b.order)
   }
 })
 function applyNewIndex() {
@@ -75,8 +107,12 @@ function applyNewIndex() {
     </div>
     <!-- Only show levels if showLevels is true -->
     <template v-if="showLevels">
+      <template v-if="isPending">
+        <p class="">Loading Levels...</p>
+      </template>
       <!-- Loop through all the levels -->
-      <template v-if="levels !== null && levels.length > 0">         
+       <tempalte v-if="levels !== null">
+        <template v-if="levels.length > 0">         
           <ul class="divide-y">
           <li v-for="level in levels" :key="level.id" class="flex items-center  cursor-pointer hover:bg-gray-200 rounded-md justify-between p-2">
             <RouterLink :to="`/dashboard/courses/${$route.params.id}/topics/${element.id}`" class="flex items-center space-x-5">
@@ -92,6 +128,8 @@ function applyNewIndex() {
       <div v-else>
         <p>No Levels Available</p>
       </div>
+       </tempalte>
+      
       <Button
         @click="() => $router.push(`/dashboard/courses/${$route.params.id}/topics/${element.id}/new-level`)"
         class="mx-auto my-3 block max-w-fit"

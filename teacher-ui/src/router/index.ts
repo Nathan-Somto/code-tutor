@@ -69,12 +69,17 @@ const router = createRouter({
       path: '/register',
       name: 'register',
       component: () => import('../views/RegisterView.vue')
+    },
+    {
+      path: '/test',
+      name: 'test',
+      component: () => import('../views/TestView.vue')
     }
   ]
 });
 router.beforeEach((to, from, next) => {
   let {isAuthenticated} = useAuthStore();
-  const publicPages = ['login', 'register']
+  const publicPages = ['login', 'register', 'test']
   if ( !publicPages.includes(to.name?.toString() ?? '') && !isAuthenticated) next({ name: 'login' })
   else next()
 })

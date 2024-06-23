@@ -72,7 +72,7 @@
   <script setup lang="ts">
   import { MdEditor } from 'md-editor-v3'
   import 'md-editor-v3/lib/style.css'
-  import { ref, shallowRef, computed } from 'vue'
+  import { ref, shallowRef, reactive, watch } from 'vue'
   import { type MonacoEditor, type EditorProps } from '@guolao/vue-monaco-editor'
   import { Button } from "@/components/ui/button"
   import { Input } from "@/components/ui/input"
@@ -110,16 +110,23 @@
     testCases.value.splice(index, 1)
   }
   
-  const data = computed(() => ({
+  const data = reactive({
     starterFile: starterFile.value,
     testCases: testCases.value,
     language: langs[0],
+    starterCode: code.value,
     challengeType: challengeType.value,
     functionName: challengeType.value === 'ALGORITHM' ? functionName.value : null
-  }))
-  </script>
+  })
   
-  <style scoped>
-  /* Add any necessary custom styles here */
-  </style>
+  // Watch for changes in reactive properties
+  watch([starterFile, testCases, code, challengeType, functionName], () => {
+    data.starterFile = starterFile.value
+    data.testCases = testCases.value
+    data.language = langs[0]
+    data.starterCode = code.value
+    data.challengeType = challengeType.value
+    data.functionName = challengeType.value === 'ALGORITHM' ? functionName.value : null
+  })
+  </script>
   

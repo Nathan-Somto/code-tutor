@@ -44,7 +44,7 @@
     emit('update:mcq', {
       question: question.value,
       options: options.value,
-      answer: options[answer.value]
+      answer: options.value[answer.value]
     })
   })
   

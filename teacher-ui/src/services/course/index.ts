@@ -1,3 +1,4 @@
+import apiClient from "@/config/apiClient";
 import axios from "axios";
 export type CourseType = {
     title: string;
@@ -8,14 +9,15 @@ export type CourseType = {
     image_url?: string | undefined;
 }
 export function createCourseService(data: CourseType){
-    return axios.post('/courses',data);
+    return apiClient.post('/courses',data);
 };
 export function getDashboardInfoService(profileId: string){
-    return axios.get(`/teacher/${profileId}/dashboard`);
+    console.log(`http://localhost:4000/api/teachers/${profileId}/dashboard`);
+    return apiClient.get(`/teachers/${profileId}/dashboard`);
 }
 export function getCourseService(courseId: string){
-    return axios.get(`/courses/${courseId}`);
+    return apiClient.get(`/courses/${courseId}`);
 }
 export function getEnrolledStudentsService(courseId: string){
-    return axios.get(`/courses/${courseId}/enrolled-students`)
+    return apiClient.get(`/courses/${courseId}/enrolled-students`)
 }

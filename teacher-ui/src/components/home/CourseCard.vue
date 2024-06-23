@@ -32,7 +32,7 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { BookIcon, ChevronRightIcon } from 'lucide-vue-next';
 const { courseTitle, levels, onButtonClick, topics } = defineProps<{
-  id: number
+  id: string
   courseTitle: string
   levels: number
   topics: number
