@@ -14,9 +14,9 @@ import { cn } from "@/utils";
 import { CircularProgressbarWithChildren } from "react-circular-progressbar";
 import "react-circular-progressbar/dist/styles.css";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuTrigger } from "../ui/dropdown-menu";
-import { Rank } from "../rank";
+import { LevelType, Rank } from "@/types";
 
-type LevelType = "lesson" | "quiz" | "code";
+
 export type LevelButtonProps = {
   isCurrent: boolean;
   levelType: LevelType;
@@ -29,6 +29,7 @@ export type LevelButtonProps = {
   isCompleted: boolean;
   xp: number;
   rank?: keyof typeof Rank;
+  name: string;
 };
 
 function LevelButton({
@@ -42,7 +43,8 @@ function LevelButton({
   index,
   progress,
   xp,
-  rank
+  rank,
+  name
 }: LevelButtonProps) {
   const [menu, setMenu] = React.useState(false);
   const cycleLength = 8;
@@ -70,9 +72,9 @@ function LevelButton({
     if (isCompleted) return <CheckIcon size={size} />;
     if (isLast) return <CrownIcon size={size} />;
     if (mysteryLevel) return <StarIcon size={size} />;
-    if (levelType === "code") return <Code2Icon size={size} />;
-    if (levelType === "lesson") return <BookOpenTextIcon size={size} />;
-    if (levelType === "quiz") return <BoxIcon size={size} />;
+    if (levelType.toLowerCase() === "code") return <Code2Icon size={size} />;
+    if (levelType.toLowerCase() === "lesson") return <BookOpenTextIcon size={size} />;
+    if (levelType.toLowerCase() === "quiz") return <BoxIcon size={size} />;
     return <StarIcon size={size} />;
   };
   return (
@@ -106,7 +108,7 @@ function LevelButton({
             aria-disabled={!isUnlocked}
             disabled={!isUnlocked}
             className={cn(
-              "mx-auto text-slate-200 flex-shrink-0  relative h-[70px]  w-[70px] border-b-8 bg-primary/90",
+              "mx-auto text-slate-200 flex-shrink-0 outline-none relative h-[70px]  w-[70px] border-b-8 bg-primary/90",
             )}
           >
             <Icon />
@@ -127,7 +129,10 @@ function LevelButton({
         </DropdownMenuTrigger>
         )}
         <DropdownMenuContent className=" min-h-28 py-3 px-2 min-w-44 z-[9999999999999999]">
-          <h3 className="text-lg mb-1.5 font-semibold capitalize ">{levelType} Level</h3>
+          <div className="flex items-center gap-x-2 flex-wrap">
+          <h3 className="text-lg mb-1.5 font-semibold capitalize ">{name}</h3>
+          <p className="rounded-md border-2 px-2 bg-primary text-white border-slate-400 dark:border-slate-800">{levelType}</p>
+          </div>
          {rank && ( 
           <div className="flex items-center gap-x-1">
             <p>Difficulty: </p>
@@ -137,7 +142,7 @@ function LevelButton({
          }
           <Button variant="primary" onClick={() => {navigate(link); setMenu(false);}} className="w-full mt-3">
           <span>Start</span>
-          <span className="text-slate-950">(+{xp}XP)</span>
+          <span className="dark:text-slate-950 text-slate-700 ml-1">(+{xp}XP)</span>
           </Button>
         </DropdownMenuContent>
       </DropdownMenu>

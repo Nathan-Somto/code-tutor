@@ -4,18 +4,20 @@ import "./App.css";
 import NetworkToast from "./components/toasts/NetworkToast";
 import RootLayout from "./pages/(root)/RootLayout";
 import { Spinner } from "./components/ui/spinner";
-import CodeSubmissions from "./pages/(challenges)/CodeSubmissions";
-
-// Lazy-loaded components
+import LandingPage from "./pages/(marketing)/LandingPage";
+import { ProtectedRoute } from "./pages/ProtectedRoute";
+import { Toaster } from "./components/ui/toaster";
+import { LearnLayout } from "./pages/(root)/(learn)/LearnLayout";
+import Register from "./pages/(auth)/Register";
+import Login from "./pages/(auth)/Login";
+// Lazy-loaded component
+const CodeSubmissions = lazy(() => import("./pages/(challenges)/CodeSubmissions"));
 const CodeChallenge = lazy(() => import("./pages/(challenges)/CodeChallenge"));
 const QuizChallenge = lazy(() => import("./pages/(challenges)/QuizChallenge"));
-const LandingPage = lazy(() => import("./pages/(marketing)/LandingPage"));
-const Login = lazy(() => import("./pages/(auth)/Login"));
 const StyleGuide = lazy(() => import("./pages/StyleGuide"));
 const SentEmail = lazy(() => import("./pages/(auth)/SentEmail"));
-const Register = lazy(() => import("./pages/(auth)/Register"));
-const Courses = lazy(() => import("./pages/(root)/Courses"));
-const Learn = lazy(() => import("./pages/(root)/Learn"));
+const Courses = lazy(() => import("./pages/(root)/(learn)/Courses"));
+const Learn = lazy(() => import("./pages/(root)/(learn)/Learn"));
 const VerifyEmail = lazy(() => import("./pages/(auth)/VerifyEmail"));
 const Lesson = lazy(() => import("./pages/(challenges)/Lesson"));
 const Result = lazy(() => import("./pages/(challenges)/Result"));
@@ -38,9 +40,12 @@ function App() {
       >
         <Routes>
           <Route path="/" element={<LandingPage />} />
+          <Route element={<ProtectedRoute/>}>   
           <Route element={<RootLayout />}>
+          <Route element={<LearnLayout/>}>
             <Route path="/courses" element={<Courses />} />
             <Route path="/learn/:id" element={<Learn />} />
+          </Route>
             <Route path="/profile/:username" element={<Profile />} />
             <Route path="/quests" element={<Quests/>} />
             <Route path="/leaderboard" element={<Leaderboard />} />
@@ -51,6 +56,7 @@ function App() {
             <Route path="quiz" element={<QuizChallenge />} />
             <Route path="lesson" element={<Lesson />} />
             <Route path="result" element={<Result />} />
+          </Route>
           </Route>
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
@@ -64,6 +70,7 @@ function App() {
         </Routes>
       </Suspense>
       <NetworkToast />
+      <Toaster />
     </BrowserRouter>
   );
 }

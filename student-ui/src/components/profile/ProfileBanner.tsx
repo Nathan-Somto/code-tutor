@@ -7,13 +7,13 @@ import { formatJoinedAt } from "@/utils/formatJoinedAt";
 import RankComponent from "../rank";
 export default function ProfileBanner() {
     const user = {
-        profilePhoto: '',
+        profilePhoto: 'https://randomuser.me/api/portraits/men/1.jpg',
         joinedAt: new Date(),
         username: "Nathan-Somto",
         name: "Mkparu Somtochi",
-        xpPoints: 3500,
-        streakCount: 50,
-        rank: "Easy"
+        xpPoints: 350,
+        streakCount: 3,
+        rank: "Hard"
     };
     return(
         <div className="2xl:min-h-[396px] pb-5 rounded-3xl px-6 relative flex  gap-8   lg:mt-16 2xl:mt-24">

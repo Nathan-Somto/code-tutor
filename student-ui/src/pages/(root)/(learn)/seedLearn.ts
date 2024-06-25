@@ -1,16 +1,4 @@
-import { LevelButtonProps } from "@/components/learn/LevelButton";
-import Topic from "@/components/learn/Topic";
-import { TopicHeaderProps } from "@/components/learn/TopicHeader";
-import { Spinner } from "@/components/ui/spinner";
-import React from "react";
-type TopicProps = {
-  topic: Omit<TopicHeaderProps, "index">;
-  levels: (LevelButtonProps & { id: string })[];
-}[];
-
-export default function Learn() {
-  const [topics, setTopics] = React.useState<TopicProps>([]);
-  React.useEffect(() => {
+/*  React.useEffect(() => {
     const sampleLevels: (LevelButtonProps & { id: string })[] = [];
 const currentLevelIndex = 9; // Set the index of the current level
 for (let i = 1; i <= 12; i++) {
@@ -64,29 +52,4 @@ setTimeout(() => {
       setTopics(sampleTopics);
     }, 3000)
   }, []);
-  console.log(topics);
-  if (topics.length === 0) {
-    return (
-      <div className="relative h-screen">
-        <Spinner
-          variant="dots"
-          withContainer
-          containerBackground="transparent"
-          containerType="center"
-          size="sm"
-        />
-      </div>
-    );
-  }
-  return (
-    <div className="pb-5 lg:px-6 px-0 -mt-3">
-      {topics.map((topic, index) => (
-        <Topic
-          topic={{ ...topic.topic, index }}
-          levels={topic.levels}
-          key={topic.topic.name + index}
-        />
-      ))}
-    </div>
-  );
-}
+  console.log(topics); */

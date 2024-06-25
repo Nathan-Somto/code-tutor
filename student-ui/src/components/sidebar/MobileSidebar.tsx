@@ -25,7 +25,9 @@ export default function MobileSidebar() {
         </p>
       </div>
       <div>
-        <UserProgressHeader />
+        {pathname !== '/courses' && (
+          <UserProgressHeader />     
+        )}
       </div>
     </nav>
   );

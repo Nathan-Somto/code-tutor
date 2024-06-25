@@ -1,10 +1,5 @@
-export enum Rank {
-    Easy = 5,
-    Medium = 4,
-    Hard = 3,
-    Advanced = 2,
-    Expert = 1,
-  }
+import { Rank } from "@/types";
+
   type ShieldProps  = {
     rank: keyof typeof Rank;
     size?: number; // Size in pixels

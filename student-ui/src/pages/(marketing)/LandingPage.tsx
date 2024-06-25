@@ -5,8 +5,8 @@ export default function LandingPage() {
   const navigate = useNavigate();
   return (
     <div className="relative overflow-hidden">
-      <div className="absolute h-36 w-36 p-36 blur-lg rounded-full bg-gradient-to-tl left-0 right-0 mx-auto from-violet-950 z-[600] via-indigo-950 opacity-30 -top-36 to-purple-950"></div>
-      <div className="absolute h-36 w-36 p-28 blur-lg rounded-full bg-gradient-to-r -left-8 from-violet-950 opacity-30 -bottom-12 to-indigo-950"></div>
+      <div className="absolute h-36 w-36 p-36 blur-lg rounded-full bg-gradient-to-tl left-0 right-0 mx-auto from-violet-300 dark:from-violet-950 z-[600] via-indigo-400 dark:via-indigo-950 opacity-30 -top-36 to-purple-400 dark:to-purple-950"></div>
+      <div className="absolute h-36 w-36 p-28 blur-lg rounded-full bg-gradient-to-r -left-8 from-violet-400 dark:from-violet-950 opacity-30 -bottom-12 to-indigo-300 dark:to-indigo-950"></div>
       <div className="h-screen relative overflow-x-hidden">
         <nav className="w-full max-w-7xl inset-x-0 px-4 bg-background z-[500] mx-auto py-4 fixed top-0 border-b">
           <div className="w-full flex items-center justify-between">
@@ -36,14 +36,14 @@ export default function LandingPage() {
         </nav>
         <main className="max-w-7xl pt-24 md:pt-36 px-4 mx-auto flex flex-wrap flex-col md:flex-row items-center">
           <div className="flex flex-col w-9/12 xl:w-6/12 justify-center lg:items-start">
-            <h1 className="my-4 text-4xl md:text-5xl  text-white opacity-75 font-bold leading-tight text-center md:text-left">
+            <h1 className="my-4 text-4xl md:text-5xl text-black  dark:text-white opacity-75 font-bold leading-tight text-center md:text-left">
               Learn{" "}
-              <span className="bg-clip-text text-transparent bg-gradient-to-r from-green-400 via-indigo-500 to-purple-500">
+              <span className="bg-clip-text text-transparent bg-gradient-to-r from-green-600 via-indigo-600 to-purple-600 dark:from-green-400 dark:via-indigo-500 dark:to-purple-500">
                 A Programming{" "}
               </span>
               Language!
             </h1>
-            <p className="leading-normal text-[14.8px] md:text-xl mb-3 md:text-left text-center">
+            <p className="leading-normal text-[14.8px] opacity-80 md:text-xl mb-3 md:text-left text-center">
               master programming in a fun addictive way.
             </p>
             <div className="flex gap-5 xl:w-[75%] flex-col md:flex-row mt-3 w-full justify-center md:justify-start">
@@ -63,8 +63,8 @@ export default function LandingPage() {
               </Button>
             </div>
           </div>
-
-          <div className="w-full mt-5 lg:mt-0 md:w-9/12 xl:w-6/12 border-purple-950 relative h-[300px]  xl:h-[400px] rounded-lg bg-gradient-to-tr border from-blue-950 via-indigo-950 to-purple-950">
+{/* macbook terminal design */}
+          <div className="w-full mt-5 lg:mt-0 md:w-9/12 xl:w-6/12 border-purple-400 dark:border-purple-950 relative h-[300px]  xl:h-[400px] rounded-lg bg-gradient-to-tr border from-blue-500 dark:from-blue-950 via-indigo-500 via-indigo-950 to-purple-500 dark:to-purple-950">
             <div className="flex flex-row">
               <div className="h-[1px] bg-gradient-to-r from-transparent via-purple-700 to-violet-600 w-full"></div>
               <div className="h-[1px] bg-gradient-to-r from-violet-600 to-transparent w-full"></div>
@@ -76,7 +76,7 @@ export default function LandingPage() {
                 <div className="rounded-full bg-green-200 w-3 h-3"></div>
               </div>
             </div>
-            <div className="px-8 py-8 border-t-[2px] border-indigo-900 overflow-hidden">
+            <div className="px-8 py-8 border-t-[2px] text-white/80 dark:text-black/80 border-indigo-400 dark:border-indigo-900 overflow-hidden">
               <code
                 style={{
                   textShadow: "none",

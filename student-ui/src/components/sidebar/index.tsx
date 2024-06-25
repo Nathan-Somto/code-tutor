@@ -38,10 +38,11 @@ const data: Parameters<typeof SidebarItem>[number][] = [
 export default function Sidebar({ className = "" }: Props) {
   // const currentCourse = { id: "1234567", label: "python" };
   const {data:{currentCourse}} = useRoot() as RootProps;
+  console.log("currentCourse", currentCourse);
   return (
     <div
       className={cn(
-        "flex h-full lg:w-[256px] py-3 lg:fixed left-0 top-0 border-slate-700 px-4 lg:border-r-2 flex-col",
+        "flex h-full lg:w-[256px] py-3 lg:fixed left-0 top-0 border-slate-300 dark:border-slate-700 px-4 lg:border-r-2 flex-col",
         className
       )}
     >
@@ -56,13 +57,19 @@ export default function Sidebar({ className = "" }: Props) {
           if (item.label !== "Learn") {
             return <SidebarItem {...item} key={item.href} />;
           }
-          return (
-            <SidebarItem
-              {...item}
-              href={item.href + "/" + currentCourse}
-              key={item.href}
-            />
-          );
+          if(currentCourse === null && item.label === "Learn")
+            {
+            return null;
+          }
+          else {
+            return (
+              <SidebarItem
+                {...item}
+                href={item.href + "/" + currentCourse}
+                key={item.href}
+              />
+            );
+          }      
         })}
         <SidebarItem
           href="/profile/johndoe123"
