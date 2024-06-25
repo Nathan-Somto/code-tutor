@@ -45,8 +45,7 @@ model Student {
   unlockedBadges              Badge[]          @relation(fields: [badgeId], references: [id])
   badgeId                     String[]         @db.ObjectId
   badgeProgress               BadgeProgress[]
-  rankProgress                RankProgress     @relation(fields: [rankProgressId], references: [id])
-  rankProgressId              String           @db.ObjectId
+  rankProgress                RankProgress?   
   courseProgress              CourseProgress[]
   streaks                     Streaks?
   levelProgress               LevelProgress[]
@@ -209,14 +208,14 @@ model TestCase {
 // Advanced - Expert (10 hard levels or 5 advanced levels)
 // this stores the rank progress  for a particular student (general user progress)
 model RankProgress {
-  id            String    @id @default(auto()) @map("_id") @db.ObjectId
-  studentId     String    @unique @db.ObjectId
+  id            String  @id @default(auto()) @map("_id") @db.ObjectId
+  studentId     String  @unique @db.ObjectId
   EasyCount     Int
   MediumCount   Int
   HardCount     Int
   AdvancedCount Int
   ExpertCount   Int
-  Student       Student[]
+  Student       Student @relation(fields:[studentId], references: [id]) 
 }
 
 // complete quests to unlock badges

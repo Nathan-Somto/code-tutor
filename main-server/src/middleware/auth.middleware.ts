@@ -9,10 +9,12 @@ export const  auth  = async (req: Request, res: Response, next: NextFunction) =>
             throw new UnAuthorizedError( 'No token provided');
         }
         const token = headers.toString().split(' ')[1];
+        console.log("the token: ", token)
         const payload:tokenData =  jwt.verify(token,process.env.JWT_SECRET ?? '') as unknown as tokenData;
         if(!payload.is_email_verified){
             throw new UnAuthorizedError("Please verify your email in order to access this resource");
         }
+        console.log("token payload", payload);
        const user = await prisma.user.findUnique({
             where: {
                 id: payload.userId

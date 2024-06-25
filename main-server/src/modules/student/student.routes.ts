@@ -15,7 +15,7 @@ import {
   getProfile,
   getStudents
 } from "./student.controller";
-import auth from "../auth";
+import {auth} from "../../middleware/auth.middleware";
 import { teacherMiddleware } from "../../middleware/teacher.middleware";
 const router = express.Router();
 router.use(auth);

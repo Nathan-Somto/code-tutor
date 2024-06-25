@@ -7,5 +7,5 @@ router.post("/login", login);
 router.post("/verify-email", verifyEmail);
 router.post("/password-reset", resetPassword);
 router.patch("/change-password/:token", changePassword);
-router.post("resend-otp", resendOtp);
+router.post("/resend-otp", resendOtp);
 export default router;

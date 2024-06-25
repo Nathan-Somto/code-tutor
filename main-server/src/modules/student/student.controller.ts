@@ -235,7 +235,7 @@ const completeLevel = async (
       );
     // update rank progress, check if the user has achieved a new rank send info if so.
     const newRank = await updateRankProgress(
-      student.rankProgress.id,
+      student?.rankProgress?.id ?? '',
       levelProgress.level.levelType,
       student.rank,
       studentId
@@ -340,8 +340,8 @@ const enrollInCourse = async (
         },
       },
     });
-    if (!course) {
-      throw new NotFoundError("Course could not be found!");
+    if (course) {
+      throw new BadRequestError("User already enrolled in course");
     }
     const firstTopic = await prisma.topic.findFirst({
       where: { courseId },
@@ -362,8 +362,8 @@ const enrollInCourse = async (
     const courseProgress = await prisma.courseProgress.create({
       data: {
         courseId,
-        topicId: firstLevelId,
-        levelId: firstTopicId,
+        topicId: firstTopicId,
+        levelId: firstLevelId,
         isCompleted: false,
         studentId,
       },
@@ -382,7 +382,6 @@ const enrollInCourse = async (
     });
 
     ResponseHandler.send(res, 201, {
-      enrolledIds: course.enrolledStudentsId,
       courseProgress,
       studentId,
       message: "Enrolled in course successfully",
@@ -395,7 +394,7 @@ const getCourses = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const { studentId } = req.params;
     const profileId = req.user?.profileId;
-
+    console.log(studentId, profileId)
     if (studentId !== profileId) {
       throw new UnAuthorizedError("Cannot access courses of another user!");
     }
@@ -578,7 +577,7 @@ const getStudentProgress = async (
     if (!progressData) {
       throw new BadRequestError("student does not exist!");
     }
-    const streaksData = getStreaksData(studentId);
+    const streaksData = await getStreaksData(studentId);
     ResponseHandler.send(
       res,
       200,
@@ -611,15 +610,55 @@ const getCourseProgress = async (
         AND: [{ studentId }, { courseId }],
       },
       select: {
+        id: true,
         levelId: true,
         topicId: true,
         isCompleted: true,
       },
     });
+    if(courseProgress === null){
+      throw new UnAuthorizedError("student has not enrolled in course!");
+    }
+    const levelProgress = await prisma.levelProgress.findFirst({
+      where: {
+        AND: [{ studentId }, { levelId: courseProgress.levelId }],
+      },
+      select: {
+        completedLevel: true,
+        currentLessonNumber: true,
+        currentQuizNumber: true,
+      },
+    })
+    const level = await prisma.level.findFirst({
+      where: {
+        id: courseProgress.levelId
+      },
+      select: {
+        QuizChallenge: {
+          select:{
+            id: true
+          }
+        },
+        Lesson: {
+          select: {
+            content: true
+          }
+        }
+      }
+    })
+    let currentLevelProgress = level?.QuizChallenge  ? Math.floor((levelProgress?.currentQuizNumber ?? 0) / (level?.QuizChallenge?.length ?? 0)) * 100 : level?.Lesson  ? Math.floor((levelProgress?.currentLessonNumber ?? 0) / (level?.Lesson?.content?.length ?? 0)) : 0
+    currentLevelProgress = levelProgress?.completedLevel ? 100 : currentLevelProgress
+    let formattedProgress = {
+      currentLevel: {
+        progress:currentLevelProgress,
+        id: courseProgress.levelId
+      },
+      courseProgress
+    }
     ResponseHandler.send(
       res,
       200,
-      { courseProgress, studentId },
+      { ...formattedProgress, studentId },
       "succesfully retireved course progress"
     );
   } catch (err) {
