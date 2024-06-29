@@ -24,12 +24,14 @@ export default function Terminal({
 }: TerminalProps) {
   const sampleTestCases: TerminalProps["testCases"] = [
     {
+      input: "[]",
       description: "must be an empty array",
       expectedOutput: "[]",
       output: "[-1]",
       passed:false,
   },
   {
+      input: "[1,2,3,4,5,9]",
       output: "[1,2,3,4,5,9]",
       description: "must be a sorted array",
       expectedOutput: "[1,2,3,4,5,9]",
@@ -74,10 +76,10 @@ export default function Terminal({
       <div className="flex items-center w-full justify-between border-b border-gray-700 px-5 py-3">
       <TabsList className="bg-transparent">
         <TabsTrigger value="output" asChild>
-          <Button variant="link"  className="text-secondary-foreground data-[state=active]:bg-[hsl(240,41%,13%)]">Output</Button>
+          <Button variant="link"  className="text-secondary-foreground  dark:data-[state=active]:bg-[hsl(240,41%,13%)]">Output</Button>
         </TabsTrigger>
         <TabsTrigger value="testCases" asChild >
-          <Button variant={"link"} className="text-secondary-foreground data-[state=active]:bg-[hsl(240,41%,13%)]">Test Results</Button>
+          <Button variant={"link"} className="text-secondary-foreground dark:data-[state=active]:bg-[hsl(240,41%,13%)]">Test Results</Button>
         </TabsTrigger>
       </TabsList>
       <div className="flex items-center gap-2">

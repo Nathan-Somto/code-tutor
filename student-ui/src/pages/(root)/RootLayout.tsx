@@ -1,15 +1,13 @@
 import Sidebar from "@/components/sidebar";
 import { Outlet, useLocation } from "react-router-dom";
 import MobileSidebar from "@/components/sidebar/MobileSidebar";
-
-import RootProvider from "../../providers/RootProvider";
 import Widget from "@/components/widget";
 import { cn } from "@/utils";
 export default function RootLayout() {
   const { pathname } = useLocation();
   console.log(pathname);
   return (
-    <RootProvider>
+    <>
       <div>
         <MobileSidebar />
         <Sidebar className="hidden lg:block" />
@@ -23,6 +21,6 @@ export default function RootLayout() {
         </main>
         {pathname !== "/courses" && <Widget />}
       </div>
-    </RootProvider>
+    </>
   );
 }

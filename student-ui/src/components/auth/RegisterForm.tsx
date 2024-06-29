@@ -73,7 +73,8 @@ export default function RegisterForm({
   const onSuccess = (response: AxiosResponse<any, any>) => {
     const {profileId, userId, profile_photo, token, username, email} = (response.data?.body);
     login({profileId, userId, profile_photo, token, username })
-    navigate(`/sent-email/?email=${email}&sent-mail=true`);
+    //navigate(`/sent-email/?email=${email}&sent-mail=true`);
+    navigate('/courses')
   }
   const {mutate, isPending} = useMutate<FormValues>({
     defaultMessage:"Could not register user",

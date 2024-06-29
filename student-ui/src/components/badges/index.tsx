@@ -3,6 +3,7 @@ import { DropdownMenu, DropdownMenuContent, DropdownMenuTrigger } from "../ui/dr
 import { Button } from "../ui/button";
 import { formatJoinedAt } from "@/utils/formatJoinedAt";
 import { imageMap } from "./data";
+import { useNavigate } from "react-router-dom";
 
 export type BadgesType = {
     name: string;
@@ -15,9 +16,10 @@ type Props ={
     badges: BadgesType[]
 }
 export default function Badges({badges}: Props){
+  const navigate = useNavigate();
     return (
         <>
-         {badges.map((badge) => (
+         { badges.length > 0  ? (badges.map((badge) => (
             <DropdownMenu  key={badge.image}>
               <DropdownMenuTrigger asChild>
                 <Button size="rounded" variant="ghost" className="size-16 items-center justify-center relative p-2 border-2 hover:opacity-50">
@@ -42,7 +44,12 @@ export default function Badges({badges}: Props){
                 </div>
               </DropdownMenuContent>
             </DropdownMenu>
-                ))}
+                ))) : (
+                  <div className="mt-3 px-2">
+                    <p className="font-medium opacity-80 tracking-tight leading-snug">Check the Quest Page for available badges and how to unlock them.</p>
+                    <Button variant="secondary" className="mt-3" onClick={() => navigate('/quests')}>Check now</Button>
+                  </div>
+                )}
         </>
        
     )

@@ -5,7 +5,12 @@ import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import RankComponent from "@/components/rank"
-const leaderboardData = {
+import { useGetQuery } from "@/hooks/query/useGetQuery";
+import { LeaderboardType, ResponseData } from "@/types";
+import { useRoot } from "@/providers/RootProvider";
+import { ErrorMessage } from "@/components/error-message";
+import { Spinner } from "@/components/ui/spinner";
+/* const leaderboardData = {
   data: [
     {
       username: "davy jones",
@@ -46,8 +51,29 @@ const leaderboardData = {
   pages: 1,
   page: 1,
   size: 10,
-};
+}; */
 export default function LeaderboardPage() {
+  const {isFetching} = useRoot();
+  const {data: response, isPending,isError, refetch} = useGetQuery<ResponseData<LeaderboardType>>({
+    route: `/students/leaderboard`,
+    queryKey: ["leaderboard"],
+    enabled: !isFetching
+  });
+  if(isError){
+    return <ErrorMessage refetch={refetch}/>
+  }
+  const leaderboardData = response?.data?.body?.leaderboard || [];
+  if(isPending){
+    return (
+      <Spinner
+      color="primary"
+      variant="round"
+      containerType="full"
+      withContainer
+      containerBackground="blur"
+      />
+    )
+  }
   return (
     <div>
       <header className="text-center my-6">
@@ -71,7 +97,7 @@ export default function LeaderboardPage() {
           <div className="max-w-16 w-16 ">Rank</div>
           <div className="max-w-16 w-16 " >XP</div>
         </div>
-        {leaderboardData.data.map((item, index) => (
+        {leaderboardData.length > 0 ? leaderboardData.map((item, index) => (
           <Link
             to={`/profile/${item.username}`}
             key={item.id}
@@ -81,7 +107,7 @@ export default function LeaderboardPage() {
               <p className="font-semibold mr-4 text-sm">#{index + 1}</p>
               <Avatar className="border-2 size-12 bg-green-600">
                 <AvatarImage
-                  src={item.avatar}
+                  src={item.user.profile_photo ?? ''}
                   alt={`${item.username} avatar`}
                 />
                 <AvatarFallback className="uppercase">
@@ -93,18 +119,20 @@ export default function LeaderboardPage() {
             <div className="max-w-16 w-16 flex-shrink-0">
               <RankComponent rank={item.rank} size={32}/>
             </div>
-            <p className="opacity-80 max-w-16 w-16">{item.xp}Xp</p>
+            <p className="opacity-80 max-w-16 w-16">{item.xpPoints}Xp</p>
           </Link>
-        ))}
+        )): (
+          <p className="text-center text-lg opacity-80">No data available</p>
+        )}
       
       <div className="flex items-center gap-3 mt-3 justify-center">   
         <Button size="icon" className='size-8'>
             <ChevronLeft/>
         </Button>
         <p>
-            <span className="opacity-80">{leaderboardData.page}</span>
+            <span className="opacity-80">{1}</span>
             {' '}of{' '}
-            <span>{leaderboardData.pages}</span>
+            <span>{1}</span>
         </p>
         <Button size="icon" className='size-8'>
             <ChevronRight/>

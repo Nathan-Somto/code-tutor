@@ -23,6 +23,7 @@ export default function UserProgressHeader() {
         data: { currentCourse, streaksData, xpPoints, gems},
         isFetching
       } = useRoot() as NonNullable<ReturnType<typeof useRoot>>;
+      console.log(streaksData, xpPoints)
       async function handleStreakFreeze() {
         // send a request to the server to freeze the streak.
         // reduce the user's xp points by -20
@@ -84,7 +85,7 @@ export default function UserProgressHeader() {
                   playAnimation={false}
                   currentCount={streaksData.currentCount}
                   streakDays={streaksData.history}
-                  currentDay={streaksData.currentDate.getDay() - 1}
+                  currentDay={new Date(streaksData.currentDate)?.getDay() ?? 0}
                   currentStatus={streaksData.currentStatus}
                 />
               </div>
@@ -94,7 +95,7 @@ export default function UserProgressHeader() {
                   <div className="size-7 rounded-full flex items-center text-white/80 justify-center bg-blue-400">
                   <ShieldCheckIcon className="size-5 text-white/80"/>
                   </div>
-                  <span>Use Freeze Streak <span className="font-bold">(-0 gems)</span></span>
+                  <span>Use Freeze Streak <span className="font-bold">(-20 gems)</span></span>
                 </Button>
                 <Button variant="primary" onClick={() => console.log('sends user to their current level.')}>
                   Learn to Save Streaks

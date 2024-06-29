@@ -36,7 +36,8 @@ console.log('current topic:',curriculum?.topics[currentTopicIndex ?? 0])
       )
     );
   }, [currentTopicIndex, curriculum, courseProgress]);
-
+  console.log("current level index:",currentLevelIndex);
+  console.log('current topic levels:',curriculum?.topics[currentTopicIndex ?? 0]?.Level)
   const currentTopic = React.useMemo(() => {
     if (currentTopicIndex === null || !curriculum) return null;
     if(currentTopicIndex === -1) return null;
@@ -54,6 +55,7 @@ console.log('current topic:',curriculum?.topics[currentTopicIndex ?? 0])
       progress: courseProgress?.currentLevel?.progress ?? 0, // current level progress
     };
   }, [currentLevelIndex, currentTopicIndex, courseProgress]);
+  console.log("current level:",currentLevel);
   if (curriculumError || courseProgressError) {
     return (
       <ErrorMessage refetch={refetch} />

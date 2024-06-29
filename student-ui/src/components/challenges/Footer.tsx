@@ -23,6 +23,8 @@ type Props =
       changePage: () => void;
       sequenceOptions?: string[];
       handleSequenceClick?: (item: string) => void;
+      outOfHearts: boolean;
+      openHeartsModal: () => void;
     };
 export default function Footer(props: Props) {
   const isQuizType = props.type === "quiz";
@@ -39,13 +41,14 @@ export default function Footer(props: Props) {
     buttonText = props.isCompleted ? "Next Level" : "Next";
   }
   //@Todo: use arrow key combinations for changing pages
-  const handler = props.isCompleted
+  let handler = props.isCompleted
     ? props.onSubmit
     : props.type === "quiz"
     ? props.status === "correct"
       ? props.changePage
       : props.onCheck
     : () => props.changePage("left");
+  handler = props.type === 'quiz' && props.outOfHearts ? props.openHeartsModal : handler;
   useKeyboardShortCut({
     callback: handler,
     key: "ENTER",

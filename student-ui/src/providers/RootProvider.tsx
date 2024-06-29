@@ -1,14 +1,13 @@
 import React from "react"
 import { useAuth } from "./AuthProvider";
 import { useGetQuery } from "@/hooks/query/useGetQuery";
-import { ApiResponseType, ResponseData, StudentProgress } from "@/types";
+import { ResponseData, StudentProgress } from "@/types";
 export type StreakNumber = 0 | 1 | 2;
 // 1-complete 0-no lesson, 2-froze
 type CurrentCourse ={
     id: string;
     imageSrc: string;
     title: string;
-
 }
 export type RootProviderProps = {
     currentCourse: CurrentCourse | null;
@@ -18,8 +17,15 @@ export type RootProps = {
     setData: React.Dispatch<React.SetStateAction<RootProviderProps>>,
     isFetching: boolean;
 }
-const RootContext = React.createContext<RootProps | null>(null);
-export const useRoot = () => React.useContext(RootContext);
+const RootContext = React.createContext<RootProps | undefined>(undefined);
+export const useRoot = () => {
+
+    let context = React.useContext(RootContext);
+    if(!context){
+        throw new Error("useRoot should be used under a RootProvider.")
+    }
+    return context
+};
 export default function RootProvider({children}:{ children: React.ReactNode }){
     const [data, setData] = React.useState<RootProviderProps>({
         currentCourse: null,
@@ -33,13 +39,14 @@ export default function RootProvider({children}:{ children: React.ReactNode }){
         },
         xpPoints: 0,
         gems: 50,
-        rank: "Easy"
+        rank: "Easy",
+        unlockedBadges: []
     });
     const {state: {auth}} = useAuth();
     // get the current logged in user's id from the useAuth hook fetch the user's data from the server and set it to the data state
     // for now populate with fake data
     const {data: studentProgress, isPending} = useGetQuery<ResponseData<StudentProgress>>({
-        enabled: auth?.profileId !== null,
+        enabled: auth?.profileId !== null || auth?.profileId !== undefined,
         route: `/students/${auth?.profileId}/student-progress`,
         queryKey: ["student", auth?.profileId, 'student-progress'],
         displayToast: false
@@ -56,8 +63,8 @@ export default function RootProvider({children}:{ children: React.ReactNode }){
         if(studentProgress?.data){
             setData((prev) => ({
                 ...prev,
-                streakData: studentProgress?.data?.body?.progressData?.streaksData,
-                totalXp: studentProgress?.data?.body?.progressData?.xpPoints,
+                streaksData: studentProgress?.data?.body?.progressData?.streaksData,
+                xpPoints: studentProgress?.data?.body?.progressData?.xpPoints,
                 gems: studentProgress?.data?.body?.progressData?.gems
             }))
         }

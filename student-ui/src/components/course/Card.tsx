@@ -132,7 +132,7 @@ export  default function Card ({
       <p className="text-neutral-700 dark:text-neutral-400 text-center font-bold mt-3 mb-4">
         {title}
       </p>
-      {progress && <Progress className="h-3" value={progress}/> }
+      {progress !== undefined && <Progress className="h-3" value={progress}/> }
       {!active && (<Button onClick={handleEnroll} disabled={disabled} variant={'primary'}>
         {isPending ? 'Enrolling...' : 'Enroll'}
       </Button>)}

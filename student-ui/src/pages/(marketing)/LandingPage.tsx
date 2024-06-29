@@ -1,8 +1,12 @@
+import { AvatarFallback } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
+import { useAuth } from "@/providers/AuthProvider";
+import { Avatar, AvatarImage } from "@radix-ui/react-avatar";
 import { Github } from "lucide-react";
 import { useNavigate, Link } from "react-router-dom";
 export default function LandingPage() {
   const navigate = useNavigate();
+  const {state: {auth}} = useAuth();
   return (
     <div className="relative overflow-hidden">
       <div className="absolute h-36 w-36 p-36 blur-lg rounded-full bg-gradient-to-tl left-0 right-0 mx-auto from-violet-300 dark:from-violet-950 z-[600] via-indigo-400 dark:via-indigo-950 opacity-30 -top-36 to-purple-400 dark:to-purple-950"></div>
@@ -21,6 +25,14 @@ export default function LandingPage() {
             </Link>
 
             <div className="flex w-1/2 justify-end content-center gap-3">
+             {auth !== null ? (
+              <Avatar onClick={() => navigate('/courses')}>
+                 <AvatarFallback>
+                        {auth.username[0] + auth.username[1]?.toUpperCase()}
+                    </AvatarFallback>
+                <AvatarImage src={auth.profile_photo} className="h-10 w-10 object-cover border-2 rounded-full  cursor-pointer dark:border-indigo-950 border-indigo-400"  />
+              </Avatar>
+             ) : (
               <Button
                 variant={"link"}
                 onClick={() => navigate("/login")}
@@ -28,6 +40,7 @@ export default function LandingPage() {
               >
                 Login
               </Button>
+             )} 
               <Button size="rounded" className="h-9 w-9 p-2">
                 <Github />
               </Button>
@@ -64,7 +77,7 @@ export default function LandingPage() {
             </div>
           </div>
 {/* macbook terminal design */}
-          <div className="w-full mt-5 lg:mt-0 md:w-9/12 xl:w-6/12 border-purple-400 dark:border-purple-950 relative h-[300px]  xl:h-[400px] rounded-lg bg-gradient-to-tr border from-blue-500 dark:from-blue-950 via-indigo-500 via-indigo-950 to-purple-500 dark:to-purple-950">
+          <div className="w-full mt-5 lg:mt-0 md:w-9/12 xl:w-6/12 border-purple-400 dark:border-purple-950 relative h-[300px]  xl:h-[400px] rounded-lg bg-gradient-to-tr border from-blue-500 dark:from-blue-950 via-indigo-500 dark:via-indigo-950 to-purple-500 dark:to-purple-950">
             <div className="flex flex-row">
               <div className="h-[1px] bg-gradient-to-r from-transparent via-purple-700 to-violet-600 w-full"></div>
               <div className="h-[1px] bg-gradient-to-r from-violet-600 to-transparent w-full"></div>

@@ -1,7 +1,8 @@
-import RankComponent, { Rank } from ".";
+import {Rank, Difficulty } from "@/types";
+import RankComponent from ".";
 
 type Props = {
-  newRank: keyof typeof Rank;
+  newRank: Difficulty;
 };
 const values = {
     "Easy": [Rank.Easy, '50% of programmers are in the ', "text-green-500"],

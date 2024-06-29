@@ -1,6 +1,7 @@
 import { Curriculum } from "@/types";
 import LevelButton  from "./LevelButton";
 import TopicHeader from "./TopicHeader";
+import { useRoot } from "@/providers/RootProvider";
 
 export type TopicProps = {
   topic: Omit<Curriculum["topics"][number], "Level"> & { index: number };
@@ -21,8 +22,8 @@ export default function Topic({
   currentLevel,
   currentTopic,
 }: TopicProps) {
-  console.log(levels);
-  const currentCourse = { id: "1234567" };
+  //const currentCourse = { id: "1234567" };
+  const {data: {currentCourse}} = useRoot();
   return (
     <div>
       <TopicHeader
@@ -33,8 +34,12 @@ export default function Topic({
         totalXp={topic.index > currentTopic.index ? topic.totalXp : undefined}
       />
       <div className="relative my-3  flex w-full flex-col items-center justify-center">
-        {levels.map((level, index) => (
-          <LevelButton
+        {levels.map((level, index) => {
+          let isCurrent = currentLevel.index === index &&
+          currentLevel.topicIndex === topic.index;
+        let isUnlocked = currentLevel.topicIndex >= topic.index &&
+        currentLevel.index >= index;
+         return ( <LevelButton
             isCompleted={
               currentLevel.index > index ||
               currentLevel.topicIndex > topic.index
@@ -42,22 +47,21 @@ export default function Topic({
             levelType={level.levelType}
             name={level.name}
             isCurrent={
-              currentLevel.index === index &&
-              currentLevel.topicIndex === topic.index
+              isCurrent
             }
             isLast={index === levels.length - 1}
             mysteryLevel={level.mysteryLevel}
             rank={level.difficulty}
             isUnlocked={
-              currentLevel.topicIndex >= topic.index &&
-              currentLevel.index >= index
+             isUnlocked
             }
             xp={level.xp}
-            link={`/challenge/${currentCourse.id}/level/${level.id}/${level.levelType}`}
+            link={`/challenge/${currentCourse?.id}/level/${level.id}/${level.levelType}`}
             index={index}
             key={level.id}
-          />
-        ))}
+            progress={(isCurrent) ? currentLevel?.progress: isUnlocked ? 100 : undefined}
+          />)
+          })}
       </div>
     </div>
   );

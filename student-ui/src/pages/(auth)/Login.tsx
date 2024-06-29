@@ -58,11 +58,11 @@ export default function LoginPage() {
       username: data?.username
     }
     login(authData);
-    if(!data?.is_email_verified){
+    /* if(!data?.is_email_verified){
       await mainApi.post('/auth/resend-otp', {userId: data?.userId});
       navigate(`/sent-email/?email=${"mkparusomtochi26@gmail.com"}&sent-mail=${true}`);
     return;
-    } 
+    }  */
     navigate('/courses');
     } catch (err) {
       console.error((err as Error).message);

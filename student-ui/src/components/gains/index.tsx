@@ -1,16 +1,17 @@
 import { useWindowSize } from "@/hooks/useWindowSize";
 import Card from "./card";
 import Confetti from 'react-confetti';
+import { LevelType } from "@/types";
 type Props = {
-  type?: "lesson" | "quiz" | "code";
+  type?: LevelType;
   xpGained: number;
-  hintsUsed: number;
+  //hintsUsed: number;
   gemsGained: number;
 };
-export default function Result({
+export default function Gains({
   type = "lesson",
   xpGained,
-  hintsUsed,
+  //hintsUsed,
   gemsGained
 }: Props) {
   const {width, height} = useWindowSize()
@@ -30,7 +31,7 @@ export default function Result({
       <p className="font-medium">Great job in completing the level!</p>
       <div className="sm:flex items-center space-y-4 sm:space-x-4 sm:space-y-0 mt-7 max-w-sm mx-auto">
         <Card variant="xp" value={xpGained} />
-      {type !== 'code' && (<Card variant="hints" value={hintsUsed} />)}
+      {/* {type !== 'code' && (<Card variant="hints" value={hintsUsed} />)} */}
        <Card variant="gems"   value={gemsGained}/>
       </div>
     </div>

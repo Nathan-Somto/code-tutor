@@ -42,14 +42,14 @@ export default function Courses() {
     console.log("the data: ",response);
     if (response?.data && response.data.body.courses) {
       const enrolledCourses = response.data.body.courses
-        .filter((course) => course?.progress)
+        .filter((course) => course?.progress !== undefined)
         .sort((a, b) => (b.progress ?? 0) - (a.progress ?? 0));
       const unEnrolledCourses = response.data.body.courses.filter(
         (course) => course.progress === undefined
       );
       setCourseData([...enrolledCourses, ...unEnrolledCourses]);
     }
-  }, [response]);
+  }, [response?.data, response?.data?.body?.courses]);
 
   const handleInfoClick = (id: string) => {
     const course = courseData?.find((course) => course.id.toString() === id);
@@ -61,7 +61,6 @@ export default function Courses() {
       id: id,
     });
   };
-
   return (
     <>
       {isPending && (

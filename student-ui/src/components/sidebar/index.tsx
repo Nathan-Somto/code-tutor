@@ -6,6 +6,7 @@ import Leaderboard from "../../assets/sidebar/leaderboard.svg";
 import Learn from "../../assets/sidebar/learn.svg";
 import Quests from "../../assets/sidebar/quests.svg";
 import { RootProps, useRoot } from "@/providers/RootProvider";
+import { useAuth } from "@/providers/AuthProvider";
 type Props = {
   className?: string;
 };
@@ -36,9 +37,8 @@ const data: Parameters<typeof SidebarItem>[number][] = [
   },
 ];
 export default function Sidebar({ className = "" }: Props) {
-  // const currentCourse = { id: "1234567", label: "python" };
   const {data:{currentCourse}} = useRoot() as RootProps;
-  console.log("currentCourse", currentCourse);
+  const{ state: {auth}} = useAuth()
   return (
     <div
       className={cn(
@@ -65,16 +65,16 @@ export default function Sidebar({ className = "" }: Props) {
             return (
               <SidebarItem
                 {...item}
-                href={item.href + "/" + currentCourse}
+                href={item.href + "/" + currentCourse?.id}
                 key={item.href}
               />
             );
           }      
         })}
         <SidebarItem
-          href="/profile/johndoe123"
+          href={`/profile/${auth?.profileId}`}
           imgAlt="profile icon"
-          username="johndoe123"
+          username={auth?.username ?? ''}
           label="Profile"
         />
       </div>

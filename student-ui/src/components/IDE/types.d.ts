@@ -1,12 +1,9 @@
+import { TestResults } from "@/types";
+
 type TerminalProps = {
     currentValue: "testCases" | "output";
     output: string;
-    testCases: {
-      description: string;
-      expectedOutput: string;
-      output: string;
-      passed: boolean;
-    }[];
+    testCases: TestResults;
     maximized: boolean;
     handleOutputReset: () => unknown;
   }

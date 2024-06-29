@@ -1,21 +1,56 @@
 import ProfileBanner from "@/components/profile/ProfileBanner";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
-
 import { sampleData } from "@/components/course/sampleData";
 import { Progress } from "@/components/ui/progress";
-import { BadgesData } from "@/components/badges/data";
 import Badges from "@/components/badges";
+import { useRoot } from "@/providers/RootProvider";
+import { Spinner } from "@/components/ui/spinner";
+import { useGetQuery } from "@/hooks/query/useGetQuery";
+import { ProfileType, ResponseData } from "@/types";
+import { useAuth } from "@/providers/AuthProvider";
+import { ErrorMessage } from "@/components/error-message";
 export default function ProfilePage() {
+  const {isFetching} = useRoot();
+  const {state: {auth}} = useAuth();
+  const {data: response , isError, isPending, refetch} = useGetQuery<ResponseData<{profile: ProfileType}>>({
+    route: `/students/${auth?.profileId}/profile`,
+    queryKey: ["profile", auth?.profileId],
+    enabled: !isFetching
+  })
   const user = {
-    enrolledCourses: [1, 4, 3],
+    enrolledCourses: [1],
     badges: [],
   };
- 
+  if(isError){
+    return <ErrorMessage refetch={refetch}/>
+  }
+  const userData = response?.data?.body?.profile ||  {
+    name: "John Doe",
+    username: "john_doe",
+    xpPoints: 0,
+    streakCount: 0,
+    rank: "Easy",
+    profile_photo: null,
+    joinedAt: new Date(),
+    badges: [],
+    gems:45
+  }
+  if(isPending){
+    return (
+      <Spinner
+      color="primary"
+      variant="round"
+      containerType="full"
+      withContainer
+      containerBackground="blur"
+      />
+    )
+  }
   return (
     <div>
       {/* Profile Banner */}
-      <ProfileBanner />
+      <ProfileBanner user={{...userData}} />
       {/* Name, Programme, Date Joined, Profile Photos.*/}
       <Separator />
       {/* Stats section */}
@@ -35,7 +70,7 @@ export default function ProfilePage() {
               .filter((data) => user.enrolledCourses.includes(data.id))
               .map((item) => (
                 <div
-                  className="flex gap-x-4 max-w-full p-2 items-center rounded-md hover:bg-slate-900 cursor-pointer"
+                  className="flex gap-x-4 max-w-full p-2 items-center hover:bg-slate-300 rounded-md dark:hover:bg-slate-900 cursor-pointer"
                   key={item.id}
                 >
                   <img
@@ -63,7 +98,13 @@ export default function ProfilePage() {
             </h2>
           </div>
           <div className="gap-3 mt-3 flex flex-wrap">
-            <Badges badges={BadgesData}/>
+          {isFetching ? (
+            <Spinner
+            color="green"
+            />
+          ) : (
+            <Badges badges={userData?.badges ?? []}/>
+          )}
           </div>
         </div>
       </div>

@@ -5,32 +5,33 @@ import React from "react";
 import GreenMonster from "@/assets/green-monster.jpeg"
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogTrigger } from "../ui/dialog";
 import { useNavigate, useParams } from "react-router-dom";
-import HintsButton from "../hintsButton";
+import HeartsButton from "../heartsButton";
+import { useChallenge } from "@/providers/ChallengesProvider";
 type Props = {
   progress: number;
-  hintsLeft: number;
-  hintsRefreshDate: Date;
   topicName: string;
-  isLesson: boolean;
-  openHintBox?: () => void;
+  heartsLeft: number;
+  type: 'quiz'
+  currentPage: number;
+} | {
+  type : 'lesson',
+  progress: number;
+  topicName: string;
+  currentPage: number;
 };
 export default function Header({
   progress,
-  hintsLeft=-1,
-  hintsRefreshDate,
   topicName,
-  isLesson,
-  openHintBox
+  currentPage,
+  ...props
 }: Props) {
-  const {courseId} = useParams();
+  // const {courseId} = useParams();
   const [openModal, setOpenModal] = React.useState(false);
-  const navigate = useNavigate()
-  async function handleSessionEnd(){
-    // store the user's current progress (get this from the store)
-    // redirect to the learn page
-    navigate(`/learn/${courseId}`)
-    // close the modal
-    setOpenModal(false);
+  const {levelCompleted, handleEndSession, isEndingSession} = useChallenge();
+  // new Date(new Date().getTime() + 60 * 1000)
+  const progressData = {
+    currentQuizNumber: props.type === 'quiz' ? currentPage : undefined,
+    currentLessonNumber: props.type === 'lesson' ? currentPage : undefined
   }
   return (
     <>
@@ -44,9 +45,9 @@ export default function Header({
        </DialogTrigger>
        <DialogContent>
         <img src={GreenMonster} alt="sad green monster face" className="h-32 w-32 mx-auto object-contain"/>
-        <DialogDescription className="font-medium text-lg text-center">Are you sure you quit to the {isLesson ? "lesson" : "quiz"}?</DialogDescription>
+        <DialogDescription className="font-medium text-lg text-center">Are you sure you quit to the {props.type}?</DialogDescription>
         <DialogFooter className="flex !flex-col space-y-3.5 !space-x-0 mt-4">
-          <Button variant="danger" className="max-w-full" onClick={handleSessionEnd}>End Session</Button>
+          <Button variant="danger" disabled={isEndingSession} className="max-w-full" onClick={!levelCompleted ? () => handleEndSession(progressData): undefined}>{!isEndingSession ? "End Session": "Loading..."}</Button>
           <Button variant="primary" className="max-w-full" onClick={() => setOpenModal(false)}>Continue Lesson</Button>
         </DialogFooter>
        </DialogContent>
@@ -56,11 +57,15 @@ export default function Header({
       <div className="w-[70%] flex-shrink-0">
         <Progress value={progress} className="w-full h-3" />
       </div>
-        <HintsButton
-        hintsLeft={hintsLeft}
-        hintsRefreshDate={hintsRefreshDate}
-        handleClick={openHintBox}
-        />
+      {
+        props.type === 'quiz' && (
+          <HeartsButton
+          heartsLeft={props.heartsLeft }
+          heartsRefreshDate={new Date()}
+          />
+        ) 
+      }
+       
     </header>
    
     </>

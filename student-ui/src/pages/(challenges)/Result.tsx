@@ -2,81 +2,64 @@ import { Button } from "@/components/ui/button";
 import { useNavigate, useParams, useSearchParams } from "react-router-dom";
 import React from "react";
 import { Spinner } from "@/components/ui/spinner";
-import ResultScreen from "@/components/result";
+import GainsScreen from "@/components/gains";
 import StreaksScreen from "@/components/streaks";
 import BadgesScreen from "@/components/badges/screen";
-import { StreakNumber } from "@/providers/RootProvider";
-import { BadgesData } from "@/components/badges/data";
-import { Rank } from "@/components/rank";
+// sample badges data
+// import { BadgesData } from "@/components/badges/data";
 import RankScreen from "@/components/rank/screen";
-type ResultData = {
-  result: {
-    xpGained: number;
-    hintsUsed: number;
-    gemsGained: number;
-  };
-  streaks?: {
-    currentStreak: number;
-    currentDay: number;
-    streakDays: StreakNumber[];
-  };
-  badge?: {
-    image: string;
-    name: string;
-    description: string;
-  };
-  rank?: {
-    newRank: keyof typeof Rank;
-  };
-};
-type Screen = "result" | "streaks" | "rank" | "badge";
-export default function ResultPage() {
-  const navigate = useNavigate();
-  const hints = 4;
-  const { courseId, levelId } = useParams();
-  const [params] = useSearchParams();
-  const [screen, setScreen] = React.useState<Screen>("result");
-  const [data, setData] = React.useState<ResultData | null>(null);
-  const availableKeys = React.useRef<Screen[]>([]);
-
-  // screen(1): Result -> total xp, hints left (shown), gems gained
-  // screen(2): Streaks (if user has unlocked streak by completing this challenge)
-  // screen(3): Badge unlocked (show the badge a user has unlocked by completing challenge)
-  React.useEffect(() => {
-    let badge = BadgesData[2];
-    // fetch the result data from the backend
-    const data: ResultData = {
-      result: {
+import { LevelType } from "@/types";
+import { useChallenge } from "@/providers/ChallengesProvider";
+type Screen = "gains" | "streaks" | "rank" | "badges";
+/** 
+ *  sample result data response
+ *  {
+      gains: {
         xpGained: 30,
-        hintsUsed: 5 - hints,
         gemsGained: 5,
       },
       streaks: {
-        currentStreak: 8,
-        currentDay: new Date().getDay(),
-        streakDays: [1, 1, 1, 1, 1, 1, 0],
+        currentCount: 8,
+        currentDate: new Date(),
+        history: [1, 1, 1, 1, 1, 1, 0],
+        currentStatus: 0
       },
-      badge: {
+      badges: {
         image: badge.image,
         name: badge.name,
         description: badge.description,
       },
-      rank: {
-        newRank: "Expert",
-      },
+      rank: "Expert",
+    
     };
-    // get the available keys from result data and store in a ref
-    availableKeys.current = Object.keys(data).filter(
-      (key) => key !== "result"
-    ) as Screen[];
-    setData(data);
-  }, []);
-  async function handler() {
+*/
+export default function ResultPage() {
+  const navigate = useNavigate();
+  const { courseId, levelId } = useParams();
+  const [params] = useSearchParams();
+  const [screen, setScreen] = React.useState<Screen>("gains");
+  console.log(screen)
+  const availableKeys = React.useRef<Screen[]>([]);
+  const { resultData: data,  } = useChallenge();
+  // screen(1): Gains -> total xp gained,  gems gained
+  // screen(2): Streaks -> if user has achieved their streak by completing this challenge
+  // screen(3): Badge unlocked -> show the badge a user has unlocked by completing challenge
+  // screen(4): Rank -> the user has attained a new rank
+  React.useEffect(() => {
+    // fetch the result data from the backend
+    if (data !== null) {
+      // get the available keys from result data and store in a ref
+      availableKeys.current = Object.keys(data).filter(
+        (key) => key !== "gains"
+      ) as Screen[];
+    }
+  }, [data]);
+  function handler() {
     if (availableKeys.current.length > 0) {
       const key = availableKeys.current.shift();
       setScreen(key as Screen);
     } else {
-      if (params.get("type") === "code") {
+      if (params.get("type")?.toLowerCase() === "code") {
         // allow the user to see other code submissions
         navigate(`/challenge/${courseId}/level/${levelId}/code-submissions`);
         return;
@@ -98,19 +81,16 @@ export default function ResultPage() {
   }
   return (
     <div>
-      {screen === "result" ? (
-        <ResultScreen
-          type={
-            params.get("type") as Parameters<typeof ResultScreen>[0]["type"]
-          }
-          xpGained={data.result.xpGained}
-          hintsUsed={data.result.hintsUsed}
-          gemsGained={data.result.gemsGained}
+      {screen === "gains" ? (
+        <GainsScreen
+          type={params.get("type") as LevelType}
+          xpGained={data.gains.xpGained}
+          gemsGained={data.gains.gemsGained}
         />
-      ) : screen === "badge" ? (
+      ) : screen === "badges" ? (
         <BadgesScreen
           badge={
-            data?.badge ?? {
+            data?.badges ?? {
               description: "",
               image: "",
               name: "",
@@ -118,18 +98,20 @@ export default function ResultPage() {
           }
         />
       ) : screen === "rank" ? (
-        <RankScreen newRank={data?.rank?.newRank ?? "Hard"} />
+        <RankScreen newRank={data?.rank ?? "Hard"} />
       ) : screen === "streaks" ? (
         <div className="flex items-center justify-center flex-col h-[80vh]">
           <StreaksScreen
-            currentCount={data?.streaks?.currentStreak ?? 0}
-            currentDay={data?.streaks?.currentDay ?? 0}
-            streakDays={data?.streaks?.streakDays ?? []}
+            currentCount={data?.streaks?.currentCount ?? 0}
+            currentDay={new Date(data?.streaks?.currentDate ?? '')?.getDay() ?? 0}
+            streakDays={data?.streaks?.history ?? []}
+            currentStatus={data?.streaks?.currentStatus ?? 0}
             playAnimation
-          /> 
+          />
         </div>
-        ) : <p></p>
-}
+      ) : (
+        <p></p>
+      )}
       <footer
         className={
           "border-t h-20 bottom-0 bg-background fixed max-w-5xl inset-x-0 w-full mx-auto flex items-center justify-between px-4 "

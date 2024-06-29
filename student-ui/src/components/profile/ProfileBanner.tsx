@@ -5,16 +5,8 @@ import { Button } from "../ui/button";
 import { PencilIcon } from "lucide-react";
 import { formatJoinedAt } from "@/utils/formatJoinedAt";
 import RankComponent from "../rank";
-export default function ProfileBanner() {
-    const user = {
-        profilePhoto: 'https://randomuser.me/api/portraits/men/1.jpg',
-        joinedAt: new Date(),
-        username: "Nathan-Somto",
-        name: "Mkparu Somtochi",
-        xpPoints: 350,
-        streakCount: 3,
-        rank: "Hard"
-    };
+import { ProfileType } from "@/types";
+export default function ProfileBanner({user}: {user: Omit<ProfileType, 'badges'>}) {
     return(
         <div className="2xl:min-h-[396px] pb-5 rounded-3xl px-6 relative flex  gap-8   lg:mt-16 2xl:mt-24">
 			<div className="w-28 h-28 2xl:w-32 2xl:h-32 text-2xl 2xl:text-3xl mb-4">
@@ -22,7 +14,7 @@ export default function ProfileBanner() {
                     <AvatarFallback>
                         {user?.username[0] + user?.username[1]?.toUpperCase()}
                     </AvatarFallback>
-                    <AvatarImage src={user?.profilePhoto} alt={`${user.username ?? ''} profile photo`}className="w-full"/>
+                    <AvatarImage src={user?.profile_photo ?? ''} alt={`${user.username ?? ''} profile photo`}className="w-full"/>
                 </Avatar>
 			</div>
             <div className="text-left">
@@ -53,7 +45,7 @@ export default function ProfileBanner() {
                 </div>
                 </div>
 				<p className="font-light text-white/70 text-xs">
-					Joined at <span className="font-medium">{formatJoinedAt(user?.joinedAt?.toISOString() ?? '')}</span>
+					Joined at <span className="font-medium">{formatJoinedAt(new Date(user?.joinedAt)?.toISOString() ?? '')}</span>
 				</p>
 			</div>
             </div>

@@ -10,6 +10,8 @@ import { Toaster } from "./components/ui/toaster";
 import { LearnLayout } from "./pages/(root)/(learn)/LearnLayout";
 import Register from "./pages/(auth)/Register";
 import Login from "./pages/(auth)/Login";
+import ChallengesLayout from "./pages/(challenges)/ChallengesLayout";
+import AppLayout from "./pages/AppLayout";
 // Lazy-loaded component
 const CodeSubmissions = lazy(() => import("./pages/(challenges)/CodeSubmissions"));
 const CodeChallenge = lazy(() => import("./pages/(challenges)/CodeChallenge"));
@@ -32,6 +34,7 @@ function App() {
           <Spinner
             variant="round"
             size="md"
+            color="green"
             containerType="full"
             containerBackground="blur"
             withContainer
@@ -40,6 +43,7 @@ function App() {
       >
         <Routes>
           <Route path="/" element={<LandingPage />} />
+          <Route element={<AppLayout />}>
           <Route element={<ProtectedRoute/>}>   
           <Route element={<RootLayout />}>
           <Route element={<LearnLayout/>}>
@@ -50,12 +54,13 @@ function App() {
             <Route path="/quests" element={<Quests/>} />
             <Route path="/leaderboard" element={<Leaderboard />} />
           </Route>
-          <Route path="/challenge/:courseId/level/:levelId">
+          <Route element={<ChallengesLayout/>} path="/challenge/:courseId/level/:levelId">
             <Route path="code" element={<CodeChallenge />} />
             <Route path="code-submissions" element={<CodeSubmissions/>}/>
             <Route path="quiz" element={<QuizChallenge />} />
             <Route path="lesson" element={<Lesson />} />
             <Route path="result" element={<Result />} />
+          </Route>
           </Route>
           </Route>
           <Route path="/login" element={<Login />} />

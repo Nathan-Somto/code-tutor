@@ -1,4 +1,5 @@
 import { Button } from "@/components/ui/button"
+import { Spinner } from "@/components/ui/spinner"
 export default function StyleGuide(){
     return (
         <div>
@@ -17,6 +18,13 @@ export default function StyleGuide(){
                 <Button variant="link">LINK</Button>
                 <Button variant="ghost">GHOST</Button>
                 </div>
+            </section>
+            <section>
+            <h2 className="text-2xl bg-primary-foreground py-2 mb-6 text-center">Spinner's</h2>
+            <div className="space-y-5 flex flex-col max-w-[400px] mx-auto">
+                <Spinner/>
+                <Spinner color="green" size="lg"/>
+            </div>
             </section>
         </div>
     )

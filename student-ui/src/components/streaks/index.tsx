@@ -19,19 +19,14 @@ export default function Streaks({
   currentDay,
   currentStatus,
 }: Props) {
-  // basic idea is this 
-  // the current status is for today's date.
-  // the history which is a list of 0,1,2 is for the past 7 days. (not including today)
-  // get the current day which is a number from 0 to 6
-  // for the history show only the numbers that are less than the current day i.e their status
   // Validate inputs to avoid potential bugs
   if (currentCount < 0) {
     console.error("Invalid currentCount: must be a non-negative number.");
     return null;
   }
 
-  if (!Array.isArray(streakDays) || streakDays.length !== 7) {
-    console.error("Invalid streakDays: must be an array of length 7.");
+  if (!Array.isArray(streakDays) || streakDays.length > 7) {
+    console.error("Invalid streakDays: must be an array with length up to 7.");
     return null;
   }
 
@@ -40,11 +35,15 @@ export default function Streaks({
     return null;
   }
 
+  // Pad the streakDays array with zeros at the front if its length is less than 7
+  const paddedStreakDays = [...Array(7 - streakDays.length).fill(0), ...streakDays];
+
   const days = ["S", "M", "T", "W", "T", "F", "S"];
-  // combine the past days, current day and future days to display
-  const pastDays = streakDays.slice(0, currentDay);
+  // Combine the past days, current day and future days to display
+  const pastDays = paddedStreakDays.slice(0, currentDay);
   const futureDays = new Array(6 - currentDay).fill(0);
   const daysToDisplay = [...pastDays, currentStatus, ...futureDays];
+
   return (
     <div className="flex items-center flex-col justify-center gap-3">
       {/* Current Streak Count with a lottie animation. */}
@@ -55,7 +54,7 @@ export default function Streaks({
             {/* The Current Streak number with a black box shadow, positioned to the top of the lottie animation. */}
             <p
               style={{ textShadow: "3px 3px black" }}
-              className="absolute top-[40%] left-2/4 -translate-x-2/4 -translate-y-2/4 w-fit z-[8] text-3xl font-bold text-center"
+              className="absolute top-[40%] left-2/4 -translate-x-2/4 text-white  -translate-y-2/4 w-fit z-[8] text-3xl font-bold text-center"
             >
               {currentCount}
             </p>
@@ -90,7 +89,7 @@ export default function Streaks({
             >
               {index < currentDay &&
                 (streakValue === 1 ? (
-                  <CheckIcon className="w-5 h-5 text-white" />
+                  <CheckIcon className="w-5 h-5 text-white flex-shrink-0" />
                 ) : streakValue === 2 ? (
                   <ShieldCheckIcon className="w-5 h-5" />
                 ) : null)}

@@ -1,0 +1,1 @@
+export const MAX_HEARTS_COUNT = 5;

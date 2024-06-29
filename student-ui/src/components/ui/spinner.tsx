@@ -28,7 +28,7 @@ const sizesClasses: SizeProps = {
 };
 
 const colorClasses: ColorProps = {
-  slate: "text-slate-800 bg-slate-800",
+  slate: "dark:text-slate-800  dark:bg-slate-800 bg-slate-950 text-slate-950",
   blue: "text-blue-500 bg-blue-500",
   red: "text-red-500 bg-red-500",
   green: "text-emerald-500 bg-emerald-500",
@@ -57,8 +57,7 @@ const RoundSpinner = ({
   return (
     <div aria-label="Loading..." role="status">
       <div
-        className={cn("animate-spin rounded-full border-4 border-solid border-current border-e-transparent align-[-0.125em] text-surface motion-reduce:animate-[spin_1.5s_linear_infinite]", sizesClasses[size], colorClasses[color], 'bg-transparent')}
-        
+        className={cn("animate-spin rounded-full border-4 border-solid border-current border-e-transparent align-[-0.125em] text-surface motion-reduce:animate-[spin_1.5s_linear_infinite]", sizesClasses[size], colorClasses[color])}    
       >
        </div>
     </div>
