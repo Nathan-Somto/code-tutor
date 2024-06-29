@@ -183,6 +183,7 @@ model CodeChallenge {
   language      String
   testCases     TestCase[]
   solution      Solution[]
+  functionName  String?
   challengeType ChallengeType @default(ALGORITHM)
 }
 

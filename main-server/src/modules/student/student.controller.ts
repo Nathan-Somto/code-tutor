@@ -149,11 +149,13 @@ const completeLevel = async (
       },
       select: {
         completedLevel: true,
+        id: true,
         level: {
           select: {
             difficulty: true,
             xp: true,
             levelType: true,
+            gems: true
           },
         },
       },
@@ -162,9 +164,11 @@ const completeLevel = async (
       throw new BadRequestError("level progress has not been created!");
     }
     let xpGained = 0;
+    let gemsGained = 0;
     if (levelProgress.completedLevel) {
       // just reduce the xp of the level by 80% and add to total xp and send the result.
-      xpGained = levelProgress.level.xp * 0.2;
+      xpGained = Math.floor(levelProgress.level.xp * 0.2);
+      gemsGained = Math.floor(levelProgress.level.gems * 0.2);
       const student = await prisma.student.update({
         where: {
           id: studentId,
@@ -173,16 +177,20 @@ const completeLevel = async (
           xpPoints: {
             increment: xpGained,
           },
+          gems: {
+            increment: gemsGained
+          }
         },
       });
       ResponseHandler.send(
         res,
         200,
         {
-          result: {
+          gains: {
             xpGained,
+            gemsGained
           },
-          totalXp: student.xpPoints,
+          levelType: levelProgress.level.levelType
         },
         "added reward for already completed level"
       );
@@ -190,6 +198,7 @@ const completeLevel = async (
     }
     // for first time completion. update xp
     xpGained = levelProgress.level.xp;
+    gemsGained = levelProgress.level.gems;
     const student = await prisma.student.update({
       where: {
         id: studentId,
@@ -198,6 +207,9 @@ const completeLevel = async (
         xpPoints: {
           increment: xpGained,
         },
+        gems: {
+          increment: gemsGained
+        }
       },
       select: {
         rank: true,
@@ -206,21 +218,14 @@ const completeLevel = async (
             id: true,
           },
         },
-        levelProgress: {
-          select: {
-            id: true,
-          },
-        },
         xpPoints: true,
+        gems: true
       },
     });
-    const levelProgressId = student.levelProgress.find((id) => id === levelId);
-    if (!levelProgressId) {
-      throw new BadRequestError("");
-    }
+   
     // Update level progress.
     await prisma.levelProgress.update({
-      where: { id: levelProgressId.id },
+      where: { id: levelProgress.id },
       data: { completedLevel: true },
     });
     // Update streaks if this is their first lesson of the day
@@ -236,7 +241,6 @@ const completeLevel = async (
     // update rank progress, check if the user has achieved a new rank send info if so.
     const newRank = await updateRankProgress(
       student?.rankProgress?.id ?? '',
-      levelProgress.level.levelType,
       student.rank,
       studentId
     );
@@ -281,13 +285,19 @@ const completeLevel = async (
       res,
       200,
       {
-        totalXp: student.xpPoints,
-        badges: unlockedBadges,
+        // stuff for result page!
+        gains: {
+          xpGained,
+          gemsGained
+        },
+        rank: newRank ?? undefined,
+        badges: unlockedBadges.length ? unlockedBadges : undefined,
+        streaks,
+        levelType: levelProgress.level.levelType,
+        // ends here
         nextLevelId,
         nextTopicId,
         studentId,
-        rank: newRank ?? undefined,
-        streaks,
       },
       "successfully completed level",
       true
@@ -375,7 +385,16 @@ const enrollInCourse = async (
         enrolledStudents: { connect: { id: studentId } },
       },
     });
-
+    await prisma.levelProgress.create({
+      data: {
+        studentId,
+        levelId: firstLevelId,
+        completedLevel: false,
+        currentLessonNumber: 0,
+        currentQuizNumber: 0,
+      },
+    });
+  
     await prisma.student.update({
       where: { id: studentId },
       data: { courseProgress: { connect: { id: courseProgress.id } } },
@@ -459,7 +478,7 @@ const getCourses = async (req: Request, res: Response, next: NextFunction) => {
       const topicIndex =
         currentTopic !== undefined ? (topics.findIndex((value) => value === currentTopic) ?? 0) : 0;
       const progress = isEnrolled
-        ? Math.floor(topicIndex / topics.length) * 100
+        ? Math.floor((topicIndex + 1) / topics.length) * 100
         : undefined;
       return {
         id: course.id,
@@ -572,18 +591,46 @@ const getStudentProgress = async (
         gems: true,
         rank: true,
         xpPoints: true,
+        badgeProgress: {
+          select: {
+            achievementDate: true,
+            xTimes: true,
+            achieved: true,
+            Badge: {
+              select : {
+                name: true,
+                image: true,
+                description: true
+              },
+
+            }
+          }
+        }
       },
     });
     if (!progressData) {
       throw new BadRequestError("student does not exist!");
     }
     const streaksData = await getStreaksData(studentId);
+    const userProgress = {
+      gems: progressData.gems,
+      rank: progressData.rank,
+      xpPoints: progressData.xpPoints,
+      unlockedBadges : progressData.badgeProgress.filter((badge) => badge.achieved).map((badge) =>(
+        {
+          achieved: badge.achieved,
+          achievementDate: badge.achievementDate,
+          xTimes: badge.xTimes,
+          ...badge.Badge
+        }
+      ))
+    }
     ResponseHandler.send(
       res,
       200,
       {
         progressData: {
-          ...progressData,
+          ...userProgress,
           streaksData,
         },
         studentId,
@@ -653,7 +700,7 @@ const getCourseProgress = async (
         progress:currentLevelProgress,
         id: courseProgress.levelId
       },
-      courseProgress
+      ...courseProgress
     }
     ResponseHandler.send(
       res,
@@ -909,8 +956,47 @@ const getLeaderboardPosition = async (req: Request, res: Response, next: NextFun
     next(err);
   }
 };
-
-
+const updateLevelProgress = async (req: Request, res: Response, next: NextFunction) => {
+  try{
+    const studentId = checkIfOwner(
+      req,
+      "cannot access the level progress of another student!"
+    );
+    const {levelId} = req.params;
+    const {currentQuizNumber, currentLessonNumber} = req.body;
+    const levelProgress = await prisma.levelProgress.findFirst({
+      where: {
+        AND: [{ studentId }, { levelId }],
+      },
+      select: {
+       completedLevel: true,
+       currentLessonNumber: true,
+       currentQuizNumber: true,
+       id: true
+      },
+    });
+    if(!levelProgress){
+      throw new BadRequestError("could not find level progress!");
+    }  
+    const updatedLevelProgress = await prisma.levelProgress.update({
+      where: {
+        id: levelProgress.id,
+      },
+      data: {
+        currentLessonNumber: currentLessonNumber ?? levelProgress.currentLessonNumber,
+        currentQuizNumber: currentQuizNumber ?? levelProgress.currentQuizNumber
+      }
+    });
+    ResponseHandler.send(
+      res,
+      200,
+      { levelProgress: updatedLevelProgress, studentId },
+      "succesfully retireved level progress"
+    );
+  }catch(err){
+    next(err)
+  }
+}
 
 const getProfile = async (req:Request, res: Response, next: NextFunction) => {
   try {
@@ -951,7 +1037,30 @@ const getProfile = async (req:Request, res: Response, next: NextFunction) => {
         }
       }
     }});
-    ResponseHandler.send(res, 200, {profile, studentId}, "retrieved student profile");
+    if(profile === null){
+      throw new NotFoundError("student profile not found!");
+    }
+    const formattedData = {
+      gems: profile.gems,
+      rank: profile.rank,
+      username: profile.username,
+      xpPoints: profile.xpPoints,
+      streakCount: profile?.streaks?.currentCount ?? 0,
+      badges: profile.unlockedBadges.map(badge => ({
+       
+          id: badge.id,
+          name: badge.name,
+          image: badge.image,
+          description: badge.description,
+          xTimes: profile.badgeProgress.find(progress => progress.badgeId === badge.id)?.xTimes ?? 0,
+          achievementDate: profile.badgeProgress.find(progress => progress.badgeId === badge.id)?.achievementDate ?? null
+      })),
+      name: profile.user.name,
+          profile_photo: profile.user.profile_photo,
+          joinedAt: profile.user.joinedAt,
+        user: undefined
+    }
+    ResponseHandler.send(res, 200, {profile: formattedData, studentId}, "retrieved student profile");
   }
   catch(err){
     next(err);
@@ -1045,5 +1154,6 @@ export {
   getLevelProgress,
   getProfile,
   getLeaderboardPosition,
-  getStudents
+  getStudents,
+  updateLevelProgress
 };

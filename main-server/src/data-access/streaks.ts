@@ -3,6 +3,7 @@ import { BadRequestError } from "../errors/httpErrors";
 import { getDayDifference } from "../utils/getDayDifference";
 export const updateStreaks = async (studentId: string) => {
   const today = new Date();
+  // gets the streaks data for the student
   const streak = await prisma.streaks.findFirst({
     where: {
       studentId,
@@ -13,24 +14,31 @@ export const updateStreaks = async (studentId: string) => {
     const dayDifference = getDayDifference(today, streak.currentDate);
 
     // The streak is already updated for today
-    if (dayDifference === 0) {
+    if (dayDifference === 0 && streak.currentStatus === 1) {
       return streaks;
     }
 
     let updatedHistory = [...streak.history];
     let updatedCount = streak.currentCount;
-
+    let createdDate = streak.createdDate;
+    let currentStatus = streak.currentStatus;
     // If the streak is for consecutive day
     if (dayDifference === 1) {
+      currentStatus = 1;
       updatedHistory.push(1);
-      updatedCount++;
+      updatedCount+=1;
     } else {
-      // If days are missed, pad with 0s and reset count
-      for (let i = 0; i < dayDifference - 1; i++) {
-        updatedHistory.push(0);
+      // If days are missed, the historry length is less than the difference between today and the streak start date
+      const diffFromCreatedDate = getDayDifference(createdDate, today);
+      if (diffFromCreatedDate > updatedHistory.length) {
+        const missingDays = diffFromCreatedDate - updatedHistory.length;
+        for (let i = 0; i < missingDays; i++) {
+          updatedHistory.push(0);
+        }
+        updatedHistory.push(1);
+        updatedCount = 1;
+        currentStatus = 1;
       }
-      updatedHistory.push(1);
-      updatedCount = 1;
     }
 
     
@@ -71,54 +79,68 @@ export const updateStreaks = async (studentId: string) => {
   };
   return streaks;
 };
+
+
 export const getStreaksData = async (studentId: string) => {
   const streak = await prisma.streaks.findFirst({
     where: {
       studentId
     }
   });
-  if(!streak) {
+
+  if (!streak) {
     return {
       history: [],
       currentStatus: 0,
       currentDate: new Date(),
       currentCount: 0
-    }
+    };
   }
+
   const today = new Date();
-  const currentDate = streak.createdDate;
-  const diff = getDayDifference(currentDate, today)
-  // if current date is today send back the  current data.
-  if( diff === 0){
+  const currentDate = streak.currentDate;
+  const createdDate = streak.createdDate;
+  const diffFromCurrentDate = getDayDifference(currentDate, today);
+  const diffFromCreatedDate = getDayDifference(createdDate, today);
+
+  // If current date is today, send back the current data.
+  if (diffFromCurrentDate === 0) {
     return {
       history: streak.history.slice(-7),
       currentStatus: streak.currentStatus,
       currentDate,
       currentCount: streak.currentCount
-    }
-  }
-  else {
-    // update all the missed days to 0
-    const updatedHistory = [...streak.history];
-    for (let i = 0; i < diff; i++){
-      updatedHistory.push(0)
     };
+  } else {
+    // Ensure the length of the history matches the actual days passed since createdDate
+    const updatedHistory = [...streak.history];
+
+    if (diffFromCreatedDate > updatedHistory.length) {
+      const missingDays = diffFromCreatedDate - updatedHistory.length;
+
+      for (let i = 0; i < missingDays; i++) {
+        updatedHistory.push(0);
+      }
+    }
+
     await prisma.streaks.update({
       where: {
         id: streak.id
       },
-      data : {
+      data: {
         currentCount: 0,
         currentDate: today,
         history: updatedHistory,
         currentStatus: 0
       }
     });
+
     return {
       currentCount: 0,
       currentDate: today,
       history: updatedHistory.slice(-7),
       currentStatus: 0
-    }
+    };
   }
-}
+};
+

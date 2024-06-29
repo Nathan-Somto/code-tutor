@@ -12,12 +12,11 @@ import { uploadRouter } from "./services/uploadthing";
 import dotenv from "dotenv";
 dotenv.config();
 const app = express();
+checkForEnvs();
 app.use(morgan('dev'));
 app.use(express.json());
 app.use(express.urlencoded({extended: true}));
 app.use(cors());
-console.log(process.env.UPLOADTHING_SECRET)
-console.log(process.env.DATABASE_URL)
 app.use('/api/auth', authRouter);
 app.use('/api/students', studentRouter);
 app.use('/api/teachers', teacherRouter);

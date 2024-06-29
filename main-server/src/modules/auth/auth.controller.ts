@@ -100,10 +100,10 @@ const registerStudent: RequestHandler = async (
     studentData.profileId = student.id;
     studentData.userId = createdUser.id;
     delete studentData.password;
-    const otp = await getOtp(createdUser.id);
-    await sendVerificationEmail(createdUser.email, createdUser.name, otp);
+    //const otp = await getOtp(createdUser.id);
+    //await sendVerificationEmail(createdUser.email, createdUser.name, otp);
     const token = createToken({
-      is_email_verified: false,
+      is_email_verified: true,
       isTeacher: false,
       userId: studentData.userId as string,
       profileId: student.id,

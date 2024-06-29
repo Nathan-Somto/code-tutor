@@ -28,13 +28,13 @@ const getCurrentRank = ({
     }
     return Difficulty.Easy;
   };
-export const updateRankProgress = async(id: string, levelType: $Enums.LevelType, rank: $Enums.Difficulty, studentId: string) => {
+export const updateRankProgress = async(id: string,  rank: $Enums.Difficulty, studentId: string) => {
     const rankProgress = await prisma.rankProgress.update({
         where: {
           id,
         },
         data: {
-          [`${levelType}Count`]: {
+          [`${rank}Count`]: {
             increment: 1,
           },
         },

@@ -13,6 +13,7 @@ import { checkLevelType } from "../../utils/checkLevelType";
 import { BadRequestError } from "../../errors/httpErrors";
 import { checkIfEnrolled } from "../../utils/checkIfEnrolled";
 import { $Enums } from "@prisma/client";
+
 const createQuizlevel = async (
   req: Request,
   res: Response,
@@ -125,7 +126,6 @@ const createLessonLevel = async (
     next(err);
   }
 };
-
 const getLevel = async (req: Request, res: Response, next: NextFunction) => {
   try {
     type GetLevelQuery = {
@@ -136,27 +136,120 @@ const getLevel = async (req: Request, res: Response, next: NextFunction) => {
     const { levelType = "Quiz" } = req.query as GetLevelQuery;
     // check if student is enrolled in the course
     const course = await checkIfEnrolled(courseId, studentId ?? "");
+    //@Todo: prevent student from getting a level they have not unlocked
     // get the level, based on the levelType select what to populate
-    const select = {
-      QuizChallenge: levelType === "Quiz" ? true : undefined,
-      Lesson: levelType === "Lesson" ? true : undefined,
-      codeChallenge:
-        levelType === "Code" ? { select: { testCases: true } } : undefined,
+    let level: {
+      id: string;
+      name: string;
+      gems: number;
+      xp: number;
+      difficulty: $Enums.Difficulty;
+      QuizChallenge?: {
+          id: string;
+          levelId: string;
+          question: string | null;
+          answer: string;
+          options: string[];
+          quizType: $Enums.QuizType;
+      }[]; 
+      Lesson?: {
+        id: string;
+        content: string[];
+        levelId: string;
+    } | null;
+    codeChallenge?: {
+         id: string;
+        starterFile: string;
+        starterCode: string;
+      challengeType: $Enums.ChallengeType;
+      testCases: {
+          id: string;
+          codeChallengeId: string;
+          input: string;
+          expectedOutput: string;
+          description: string;
+      }[];
+  } | null;
+  } | null | undefined;
+    if (levelType === "Quiz") {
+    let  quizLevel = await prisma.level.findFirst({
+        where: {
+          id: levelId,
+        },
+        select: {
+          xp: true,
+          gems: true,
+          id: true,
+          difficulty: true,
+          name: true,
+          QuizChallenge: true,
+        },
+      });
+      level = quizLevel;
+    } else if (levelType === "Lesson") {
+     let  lessonLevel = await prisma.level.findFirst({
+        where: {
+          id: levelId,
+        },
+        select: {
+          xp: true,
+          gems: true,
+          id: true,
+          difficulty: true,
+          name: true,
+          Lesson: true,
+        },
+      });
+      level = lessonLevel;
+    } else if (levelType === "Code") {
+      let codeLevel = await prisma.level.findFirst({
+        where: {
+          id: levelId,
+        },
+        select: {
+          xp: true,
+          gems: true,
+          id: true,
+          difficulty: true,
+          name: true,
+          codeChallenge: {
+            select: { testCases: true,  starterCode: true, starterFile: true,  id: true, challengeType: true},
+          },
+        },
+      });
+      level = codeLevel;
+    } else {
+      let nothingLevel = await prisma.level.findFirst({
+        where: {
+          id: levelId,
+        },
+        select: {
+          xp: true,
+          gems: true,
+          id: true,
+          difficulty: true,
+          name: true,
+        },
+      });
+      level = nothingLevel;
+    }
+    
+    if (level === undefined || level === null) {
+      throw new BadRequestError("Level does not exist!");
+    }
+    
+    const formattedData = {
+      xp: level.xp,
+      gems: level.gems,
+      difficulty: level.difficulty,
+      id: level.id,
+      name: level.name,
+      quiz: level?.QuizChallenge,
+      lesson: level?.Lesson ?? undefined,
+      code: level?.codeChallenge ?? undefined,
     };
-
-    let level = await prisma.level.findFirst({
-      where: {
-        id: levelId,
-      },
-      select: {
-        xp: true,
-        gems: true,
-        id: true,
-        difficulty: true,
-        name: true,
-        ...select,
-      },
-    });
+    
+    ResponseHandler.send(res, 200, { level: formattedData }, 'Successfully retrieved level!');    
   } catch (err) {
     next(err);
   }

@@ -6,7 +6,6 @@ import { auth } from "../../middleware/auth.middleware";
 const router = express.Router();
 // student ui
 router.use(auth);
-router.get('/:levelId', getLevel);
 router.get('/:levelId/code-submissions', getCodeSubmissions);
 // teacher ui
 router.use(teacherMiddleware);

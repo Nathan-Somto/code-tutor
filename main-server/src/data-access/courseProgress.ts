@@ -75,6 +75,7 @@ const getNextTopicAndLevelId = async (levelId: string, courseId: string) => {
           select: {
             id: true,
           },
+          take: 1
         },
       },
     });
@@ -110,6 +111,7 @@ export const updateCourseProgress = async (
   });
   if (courseProgress && courseProgress.levelId === levelId) {
     const values = await getNextTopicAndLevelId(levelId, courseId);
+    console.log("values from  getNextTopicAndLevelId", JSON.stringify(values));
     // update the count of the challenge if it is the appropriate level type
     const typeString: TypeString =
       levelType === "Quiz"

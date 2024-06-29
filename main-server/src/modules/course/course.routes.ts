@@ -3,11 +3,13 @@ import { createcourse, getCourse, getCurriculum, getEnrolledStudents, joinAsCont
 import topicRouter from "../topic";
 import { teacherMiddleware } from "../../middleware/teacher.middleware";
 import { auth } from "../../middleware/auth.middleware";
+import { getLevel } from "../level/level.controller";
 const router = express.Router();
 router.use('/:courseId/topics', topicRouter);
 // student ui
 router.use(auth);
 router.get('/:courseId/curriculum', getCurriculum);
+router.get('/:courseId/levels/:levelId', getLevel);
 router.use(teacherMiddleware);
 // teacher ui
 router.get('/:courseId', getCourse);

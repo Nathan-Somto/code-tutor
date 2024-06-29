@@ -13,7 +13,8 @@ import {
   getLeaderboard,
   getLeaderboardPosition,
   getProfile,
-  getStudents
+  getStudents,
+  updateLevelProgress
 } from "./student.controller";
 import {auth} from "../../middleware/auth.middleware";
 import { teacherMiddleware } from "../../middleware/teacher.middleware";
@@ -32,7 +33,8 @@ router.get("/:studentId/profile", getProfile)
 router.get("/:studentId/courses", getCourses);
 // Course Progress Specific i.e for learn page(get)
 router.get("/:studentId/course-progress/:courseId", getCourseProgress);
-router.get("/:studentId/level-progress/:levelId", getLevelProgress);
+router.get("/:studentId/level-progress/:levelId", getLevelProgress)
+.patch('/:studentId/level-progress/:levelId', updateLevelProgress)
 // Enroll in a Course
 router.post("/:studentId/courses/enroll", enrollInCourse);
 router.get("/:studentId/badge-progress", getBadgeProgress);
